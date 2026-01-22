@@ -1,0 +1,38 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('pessoas', function (Blueprint $table) {
+            $table->id();
+            $table->char('nome', length:70);
+            $table->char('email', length:50);
+            $table->unsignedInteger('id_profissao');
+            $table->foreign('id_profissao')->references('id')->on('profissaos')->onDelete('cascade');
+            $table->char('telefone', length:15);
+            $table->char('rg', length:12);
+            $table->char('cpf', length:12);
+            $table->date('data_nascimento');
+            $table->unsignedBigInteger('id_end');
+            $table->foreign('id_end')->references('id')->on('enderecos')->onDelete('cascade');
+            $table->boolean('funcionario');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('pessoas');
+    }
+};
