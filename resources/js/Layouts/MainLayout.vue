@@ -16,11 +16,11 @@ const toggleSidebar = () => {
   <div class="layout-container" :class="{ 'menu-closed': !isSidebarOpen }">
 
     <header class="area-header">
-      <button @click="toggleSidebar">☰</button> <TheHeader />
+      <button @click="toggleSidebar">☰</button> <Topo/>
     </header>
 
     <aside class="area-sidebar">
-      <TheSidebar v-show="isSidebarOpen" />
+      <MenuLateral v-show="isSidebarOpen" />
     </aside>
 
     <main class="area-content">
@@ -28,7 +28,7 @@ const toggleSidebar = () => {
     </main>
 
     <footer class="area-footer">
-      <TheFooter />
+      <Rodape/>
     </footer>
 
   </div>
