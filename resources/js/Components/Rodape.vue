@@ -6,9 +6,10 @@
 
 <style scoped>
 .footer-inner {
-  background-color: #f1f1f1;
+  background-color: #0a0005;
   padding: 10px;
   text-align: center;
   font-size: 0.8rem;
+  color: white;
 }
 </style>
