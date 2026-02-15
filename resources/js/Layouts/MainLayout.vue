@@ -1,10 +1,10 @@
 <script setup>
-import { ref } from 'vue';
-import Topo from '@/Components/Topo.vue';
-import MenuLateral from '@/Components/MenuLateral.vue';
-import Rodape from '@/Components/Rodape.vue';
+    import { ref } from 'vue';
+    import Topo from '@/Components/Topo.vue';
+    import MenuLateral from '@/Components/MenuLateral.vue';
+    import Rodape from '@/Components/Rodape.vue';
 
-const isSidebarOpen = ref(true);
+    const isSidebarOpen = ref(true);
 </script>
 
 <template>
