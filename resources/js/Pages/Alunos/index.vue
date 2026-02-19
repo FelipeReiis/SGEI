@@ -4,6 +4,7 @@ import { router } from '@inertiajs/vue3';
 import MainLayout from '@/Layouts/MainLayout.vue';
 import DataTable from '@/Components/DataTable.vue'; // <--- Importamos o componente
 import debounce from 'lodash/debounce'; // npm install lodash
+import { Link } from '@inertiajs/vue3';
 
 const props = defineProps({ alunos: Object, busca: Object });
 
@@ -46,7 +47,7 @@ const handleSort = (key) => {
             class="form-control w-25 rounded-pill"
             placeholder="Buscar..."
         >
-        <button class="btn btn-pink rounded-pill">+ Novo Usuário</button>
+        <Link href="/alunos/create"><button class="btn btn-pink rounded-pill" >+ Novo Usuário</button></Link>
       </template>
 
       <template #name="{ linha }">

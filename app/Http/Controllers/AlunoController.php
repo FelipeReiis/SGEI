@@ -23,5 +23,9 @@ class AlunoController extends Controller
         ]);
     }
 
+    public function create(){
+        return Inertia::render('Alunos/create_edit');
+    }
+
 
 }

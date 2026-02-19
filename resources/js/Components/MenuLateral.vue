@@ -14,7 +14,7 @@ const toggleSubmenu = (label) => {
 
 // Dados do Menu (Simulando o que viria do Backend ou Config)
 const menuItems = [
-  { label: 'Dashboard', icon: '🏠', route: '/dashboard' },
+  { label: 'Inicio', icon: '🏠', route: '/Home' },
   {
     label: 'Secretaria',
     icon: '📂',
