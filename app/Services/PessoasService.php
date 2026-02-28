@@ -30,10 +30,10 @@ class PessoasService
             'funcionario' => $req->funcionario ?? 0
         ]);
             DB::commit();
+            dd($pessoa);
             return $pessoa->id;
         }catch(Exception $e){
             DB::rollback();
-
             return "Houve um erro no cadastro: $e";
         }
 

@@ -89,6 +89,26 @@ class AlunoService
     }
 
     public function update(Request $req, $id){
-        
+
+      DB::beginTransaction();
+
+        try{
+            $aluno = Aluno::find($id);
+            $aluno->update([
+                'id_resp_fin' => $req->resp_fin,
+                'id_resp_pedag' => $req->resp_pedag,
+                'id_turma' => $req->turma
+            ]);
+            DB::commit();
+            $msg = 'Aluno atualizado com sucesso!';
+            return $msg;
+        }catch(Exception $e){
+
+            DB::rollback();
+            $msg = "Erro um tentar atualizar: $e";
+
+            return $msg;
+        }
+
     }
 }
