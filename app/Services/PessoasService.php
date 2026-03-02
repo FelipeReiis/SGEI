@@ -15,24 +15,24 @@ class PessoasService
 
     }
 
-    public function store(Request $req){
+    public function store(Request $req, $enderecoId){
         DB::beginTransaction();
         try{
         $pessoa = new pessoa();
-
         $pessoa->create([
             'nome' => $req->nome,
             'email' => $req->email,
             'telefone' => $req->telefone,
             'rg' => $req->rg,
             'cpf' => $req->cpf,
-            'data_nascimento' => $req->dt_nasc,
+            'data_nascimento' => $req->data_nascimento,
             'funcionario' => $req->funcionario ?? 0
         ]);
             DB::commit();
-            dd($pessoa);
+            dd($pessoa->id);
             return $pessoa->id;
         }catch(Exception $e){
+            dd($e);
             DB::rollback();
             return "Houve um erro no cadastro: $e";
         }

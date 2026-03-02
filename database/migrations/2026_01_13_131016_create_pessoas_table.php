@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->char('nome', length:70);
             $table->char('email', length:50);
-            $table->unsignedInteger('id_profissao');
+            $table->unsignedInteger('id_profissao')->nullable();
             $table->foreign('id_profissao')->references('id')->on('profissaos')->onDelete('cascade');
             $table->char('telefone', length:15);
             $table->char('rg', length:12);

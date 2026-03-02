@@ -31,7 +31,7 @@ class EnderecoService
                 'logradouro' => $req->logradouro
             ]);
             DB::commit();
-            return "Endereço cadastrado com sucesso";
+            return $endereco->id;
         }catch(Exception $e){
 
             DB::rolback();
@@ -59,7 +59,7 @@ class EnderecoService
                 'bairro',
                 'logradouro'
             ]));
-            
+
             DB::commit();
             return 'Registro atualizado com sucesso!';
         }catch(Exception $e){

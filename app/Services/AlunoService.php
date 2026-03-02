@@ -47,10 +47,8 @@ class AlunoService
             $msg = 'Aluno registrado com sucesso!';
             return $msg;
         }catch(Exception $e){
-
             DB::rollback();
             $msg = "Erro um tentar registrar: $e";
-
             return $msg;
         }
     }

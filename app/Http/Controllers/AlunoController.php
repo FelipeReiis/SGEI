@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\AlunoService;
+use App\Services\EnderecoService;
 use App\Services\PessoasService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -11,9 +12,11 @@ class AlunoController extends Controller
 {
     private $alunoService;
     private $pessoaService;
-    public function __construct(AlunoService $alunoService, PessoasService $pessoaService) {
+    private $enderecoServce;
+    public function __construct(AlunoService $alunoService, PessoasService $pessoaService, EnderecoService $enderecoService) {
         $this->alunoService = $alunoService;
         $this->pessoaService = $pessoaService;
+        $this->enderecoServce = $enderecoService;
     }
 
     public function index(Request $req){
@@ -31,7 +34,8 @@ class AlunoController extends Controller
     }
 
     public function store(Request $req){
-        $this->pessoaService->store($req);
+        $enderecoId = $this->enderecoServce->store($req);
+        $this->pessoaService->store($req, $enderecoId);
     }
 
     public function edit($id){
