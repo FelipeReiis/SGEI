@@ -20,11 +20,12 @@ class AlunoService
 
     public function index(Request $req){
         $alunos = Aluno::join('pessoas as aluno_pessoa', 'alunos.id_pessoa', 'aluno_pessoa.id')
-                        ->join('pessoas as pedag_pessoa', 'alunos.id_resp_pedag', 'pedag_pessoa.id')
-                        ->join('turmas', 'alunos.id_turma', 'turmas.id')
-                        ->join('professors', 'turmas.id_professor', 'professors.id')
-                        ->join('pessoas as prof_pessoa', 'professors.id_pessoa', 'prof_pessoa.id')
-                        ->select('aluno_pessoa.nome', 'pedag_pessoa.nome', 'turmas.id', 'prof_pessoa.nome' );
+                        ->leftjoin('pessoas as pedag_pessoa', 'alunos.id_resp_pedag', 'pedag_pessoa.id')
+                        // ->leftjoin('turmas', 'alunos.id_turma', 'turmas.id')
+                        // ->leftjoin('professors', 'turmas.id_professor', 'professors.id')
+                        // ->leftjoin('pessoas as prof_pessoa', 'professors.id_pessoa', 'prof_pessoa.id')
+                        ->select('aluno_pessoa.nome as aluno_nome', 'pedag_pessoa.nome' );
+
 
         if($req->busca){
             $alunos->where('aluno_pessoa.nome', 'like', '%'.$req->busca.'%');
@@ -38,15 +39,16 @@ class AlunoService
 
         try{
             Aluno::create([
-                'id_resp_fin' => $idResp['resp_fin'],
-                'id_resp_pedag' => $idResp['resp_pedag'],
+                'id_resp_fin' => 1,
+                'id_resp_pedag' => 1,
                 'id_pessoa' => $idPessoaAluno,
-                'id_turma' => $idTurma
+                'id_turma' => null
             ]);
             DB::commit();
             $msg = 'Aluno registrado com sucesso!';
             return $msg;
         }catch(Exception $e){
+            dd($e);
             DB::rollback();
             $msg = "Erro um tentar registrar: $e";
             return $msg;

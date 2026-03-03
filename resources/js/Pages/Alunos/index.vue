@@ -13,7 +13,7 @@ defineOptions({ layout: MainLayout });
 // Configuração das Colunas
 const colunas = [
   { label: 'ID', key: 'id', sortable: true },
-  { label: 'Usuário', key: 'name', sortable: true }, // Slot personalizado
+  { label: 'Aluno', key: 'nome', sortable: true }, // Slot personalizado
   { label: 'Email', key: 'email', sortable: true },
   { label: 'Status', key: 'status', sortable: false }, // Slot personalizado
   { label: 'Ações', key: 'actions', sortable: false }, // Slot personalizado

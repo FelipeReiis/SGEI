@@ -21,9 +21,8 @@ class AlunoController extends Controller
 
     public function index(Request $req){
         $alunos = $this->alunoService->index($req);
-
         return Inertia::render('Alunos/index',[
-            $alunos->paginate(10)->withQueryString(),
+            'alunos' => $alunos->paginate(10)->withQueryString(),
 
             'busca' => $req->only(['busca'])
         ]);
@@ -35,7 +34,9 @@ class AlunoController extends Controller
 
     public function store(Request $req){
         $enderecoId = $this->enderecoService->store($req);
-        $this->pessoaService->store($req, $enderecoId);
+        $pessoaAlunoId = $this->pessoaService->store($req, $enderecoId);
+        $this->alunoService->store($pessoaAlunoId, 5,6);
+        return route('Home');
     }
 
     public function edit($id){

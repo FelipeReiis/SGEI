@@ -8,5 +8,9 @@ class Aluno extends Model
 {
     protected $fillable = [
         'id_pessoa',
+        'id_resp_fin',
+        'id_resp_pedag',
+        'id_pessoa',
+        'id_turma'
     ];
 }

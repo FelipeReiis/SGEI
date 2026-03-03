@@ -13,6 +13,7 @@ class pessoa extends Model
         'rg',
         'cpf',
         'data_nascimento',
-        'funcionario'
+        'funcionario',
+        'id_end'
     ];
 }

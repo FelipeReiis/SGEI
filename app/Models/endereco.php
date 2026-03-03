@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class endereco extends Model
 {
-    protected $timestamp = false;
+    public $timestamps = false;
+
     protected $fillable = [
         'cep',
-        'lograduro',
+        'logradouro',
         'complemento',
         'bairro',
         'numero'

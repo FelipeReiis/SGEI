@@ -18,8 +18,7 @@ class PessoasService
     public function store(Request $req, $enderecoId){
         DB::beginTransaction();
         try{
-        $pessoa = new pessoa();
-        $pessoa->create([
+        $pessoa = pessoa::create([
             'nome' => $req->nome,
             'email' => $req->email,
             'telefone' => $req->telefone,
@@ -30,7 +29,6 @@ class PessoasService
             'id_end' => $enderecoId
         ]);
             DB::commit();
-            dd($pessoa->id);
             return $pessoa->id;
         }catch(Exception $e){
             dd($e);

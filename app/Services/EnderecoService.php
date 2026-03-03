@@ -25,14 +25,12 @@ class EnderecoService
                 'complemento' => $req->complemento,
                 'cep' => $req->cep,
                 'numero' => 121,
+                'logradouro' => $req->logradouro,
                 'bairro' => $req->bairro,
-                'logradouro' => $req->logradouro
             ]);
             DB::commit();
-            dd($endereco);
             return $endereco->id;
         }catch(Exception $e){
-            dd($e);
             DB::rollback();
             return "Ocorreu um erro ao cadastrar: $e";
         }
