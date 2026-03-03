@@ -21,20 +21,19 @@ class EnderecoService
 
         DB::beginTransaction();
         try{
-            $endereco = new endereco();
-
-            $endereco->create([
+            $endereco = endereco::create([
                 'complemento' => $req->complemento,
                 'cep' => $req->cep,
-                'numero' => $req->numero,
+                'numero' => 121,
                 'bairro' => $req->bairro,
                 'logradouro' => $req->logradouro
             ]);
             DB::commit();
+            dd($endereco);
             return $endereco->id;
         }catch(Exception $e){
-
-            DB::rolback();
+            dd($e);
+            DB::rollback();
             return "Ocorreu um erro ao cadastrar: $e";
         }
 

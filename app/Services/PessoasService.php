@@ -26,7 +26,8 @@ class PessoasService
             'rg' => $req->rg,
             'cpf' => $req->cpf,
             'data_nascimento' => $req->data_nascimento,
-            'funcionario' => $req->funcionario ?? 0
+            'funcionario' => $req->funcionario ?? 0,
+            'id_end' => $enderecoId
         ]);
             DB::commit();
             dd($pessoa->id);

@@ -12,11 +12,11 @@ class AlunoController extends Controller
 {
     private $alunoService;
     private $pessoaService;
-    private $enderecoServce;
+    private $enderecoService;
     public function __construct(AlunoService $alunoService, PessoasService $pessoaService, EnderecoService $enderecoService) {
         $this->alunoService = $alunoService;
         $this->pessoaService = $pessoaService;
-        $this->enderecoServce = $enderecoService;
+        $this->enderecoService = $enderecoService;
     }
 
     public function index(Request $req){
@@ -34,7 +34,7 @@ class AlunoController extends Controller
     }
 
     public function store(Request $req){
-        $enderecoId = $this->enderecoServce->store($req);
+        $enderecoId = $this->enderecoService->store($req);
         $this->pessoaService->store($req, $enderecoId);
     }
 
