@@ -7,13 +7,12 @@ import debounce from 'lodash/debounce'; // npm install lodash
 import { Link } from '@inertiajs/vue3';
 
 const props = defineProps({ alunos: Object, busca: Object });
-
 defineOptions({ layout: MainLayout });
 
 // Configuração das Colunas
 const colunas = [
-  { label: 'ID', key: 'id', sortable: true },
-  { label: 'Aluno', key: 'nome', sortable: true }, // Slot personalizado
+  { label: 'ID', key: 'aluno_id', sortable: true },
+  { label: 'Aluno', key: 'aluno_nome', sortable: true }, // Slot personalizado
   { label: 'Email', key: 'email', sortable: true },
   { label: 'Status', key: 'status', sortable: false }, // Slot personalizado
   { label: 'Ações', key: 'actions', sortable: false }, // Slot personalizado
@@ -62,10 +61,30 @@ const handleSort = (key) => {
         <span class="badge rounded-pill bg-secondary" v-else>Inativo</span>
       </template>
 
-      <template #actions="{ linha }">
+      <!-- <template #actions="{ linha }">
         <button class="btn btn-sm btn-outline-secondary me-1">✏️</button>
         <button class="btn btn-sm btn-outline-danger">🗑️</button>
-      </template>
+      </template> -->
+
+       <template #actions="{ linha }">
+            <div class="d-flex gap-2">
+                <Link
+                    :href="route('alunos.edit', linha.aluno_id)"
+                    class="btn btn-sm btn-outline-pink"
+                    title="Editar Aluno">
+                    <i class="bi bi-pencil"></i> ✏️
+                </Link>
+
+                <!-- <button
+                    @click="confirmarExclusao(linha.id, linha.nome)"
+                    class="btn btn-sm btn-outline-danger"
+                    title="Excluir Aluno"
+                >
+                    <i class="bi bi-trash"></i> 🗑️
+                </button> -->
+
+            </div>
+        </template>
 
     </DataTable>
   </div>

@@ -3,32 +3,52 @@
     import { useForm } from '@inertiajs/vue3';
 
     defineOptions({ layout: MainLayout });
-
-    const formulario = useForm({
-        nome: '',
-        email: '',
-        telefone: '',
-        rg: '',
-        cpf: '',
-        data_nascimento: '',
-        turma_id: '',
-        cep: '',
-        logradouro: '',
-        bairro: '',
-        complemento: '',
+    const props = defineProps({
+        aluno: {
+            type: Object,
+            default: null // Se for null, estamos criando
+        }
+    });
+   const formulario = useForm({
+        nome: props.aluno?.nome ?? '',
+        email: props.aluno?.email ?? '',
+        telefone: props.aluno?.telefone ?? '',
+        rg: props.aluno?.rg ?? '',
+        cpf: props.aluno?.cpf ?? '',
+        data_nascimento: props.aluno?.data_nascimento ?? '',
+        cep: props.aluno?.cep ?? '',
+        logradouro: props.aluno?.logradouro ?? '',
+        bairro: props.aluno?.bairro ?? '',
+        complemento: props.aluno?.complemento ?? '',
+        turma_id: props.aluno?.turma_id ?? '',
     });
 
     const enviar = () => {
-        formulario.post(route('alunos.store'), {
-            onSuccess: () => {
-            // O que fazer se salvar com sucesso (ex: fechar modal ou limpar)
-            console.log('Aluno salvo com sucesso!');
-            },
-            onError: (erros) => {
-            // O Inertia já preenche o formulario.errors automaticamente
-            console.error('Existem erros no formulário', erros);
-            }
-        });
+        if(props.aluno){
+
+            formulario.post(route('alunos.store'), {
+                onSuccess: () => {
+                // O que fazer se salvar com sucesso (ex: fechar modal ou limpar)
+                console.log('Aluno salvo com sucesso!');
+                },
+                onError: (erros) => {
+                // O Inertia já preenche o formulario.errors automaticamente
+                console.error('Existem erros no formulário', erros);
+                }
+            });
+        }else {
+             formulario.put(route('alunos.update', props.aluno.id), {
+                onSuccess: () => {
+                    // O que fazer se salvar com sucesso (ex: fechar modal ou limpar)
+                    console.log('Aluno salvo com sucesso!');
+                },
+                onError: (erros) => {
+                    // O Inertia já preenche o formulario.errors automaticamente
+                    console.error('Existem erros no formulário', erros);
+                }
+            });
+        }
+
     };
 </script>
 <template>
@@ -105,7 +125,7 @@
 
       <div class="d-flex justify-content-end gap-2 mt-5">
         <button type="button" class="btn btn-outline-secondary px-4">Cancelar</button>
-       <button
+        <button
         type="submit"
         class="btn btn-pink px-5 fw-bold"
         :disabled="formulario.processing">

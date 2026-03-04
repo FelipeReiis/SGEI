@@ -23,7 +23,6 @@ class AlunoController extends Controller
         $alunos = $this->alunoService->index($req);
         return Inertia::render('Alunos/index',[
             'alunos' => $alunos->paginate(10)->withQueryString(),
-
             'busca' => $req->only(['busca'])
         ]);
     }
@@ -40,7 +39,6 @@ class AlunoController extends Controller
     }
 
     public function edit($id){
-
         $this->alunoService->edit($id);
         return Inertia::render('Alunos/create_edit');
 
