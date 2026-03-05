@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\endereco;
+use App\Models\pessoa;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,8 +19,10 @@ class EnderecoService
     }
 
     public function store(Request $req){
-
         DB::beginTransaction();
+        foreach($req->all() as $chave => $valor){
+            dd($chave);
+        }
         try{
             $endereco = endereco::create([
                 'complemento' => $req->complemento,
@@ -46,11 +49,11 @@ class EnderecoService
     public function update(Request $req, $id){
         DB::beginTransaction();
         try{
-
-            $endereco = endereco::find($id);
+            $id_end = pessoa::select('id_end')->where('id', $id)->first();
+            $endereco = endereco::find($id_end->id_end);
 
             $endereco->update($req->only([
-                'compelmento',
+                'complemento',
                 'cep',
                 'numero',
                 'bairro',
@@ -58,10 +61,12 @@ class EnderecoService
             ]));
 
             DB::commit();
-            return 'Registro atualizado com sucesso!';
+            $msg = 'Registro atualizado com sucesso!';
+            return $msg;
         }catch(Exception $e){
             DB::rollback();
-            return "Erro ao atualizar registro: $e";
+            $msg = "Erro ao atualizar registro: $e";
+            return $msg;
         }
     }
 }

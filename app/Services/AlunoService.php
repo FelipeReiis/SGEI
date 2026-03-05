@@ -68,6 +68,7 @@ class AlunoService
                     ->select(
                                 'aluno_pessoa.*',
                                 'aluno_end.*',
+                                'aluno_end.id as id_aluno_end',
                                 // 'pedag_pessoa.nome as responsavel_pedagogico',
 
                                 // DB::raw("
@@ -80,11 +81,9 @@ class AlunoService
 
                                 // 'turmas.id'
                     )->first();
-            dd($aluno);
             return $aluno;
 
         }catch(Exception $e){
-            dd($e);
             $msg = "Erro ao consultado os dados: $e";
             return $msg;
         }

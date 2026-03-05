@@ -19,6 +19,17 @@ class StorePessoaRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'name' => trim($this->name),
+            'email' => trim($this->email),
+            'telefone' => trim($this->telefone),
+            'rg' => trim($this->rg),
+            'cpf' =>trim($this->cpf),
+            'data_nascimento' =>trim($this->data_nascimento)
+        ]);
+    }
     public function rules(): array
     {
         return [
@@ -27,7 +38,7 @@ class StorePessoaRequest extends FormRequest
             'telefone' => 'required|string|max:15',
             'rg' => 'required|string|max:12',
             'cpf' => 'required|string|max:12',
-            'dt_nasc' => 'required|date',
+            'data_nascimento' => 'required|date',
         ];
     }
 }

@@ -51,20 +51,23 @@ class PessoasService
         try{
             $pessoa = pessoa::find($id);
 
-        $pessoa->update($req->only([
-                'nome',
-                'email',
-                'telefone',
-                'rg',
-                'cpf',
-                'dt_nasc',
-                'funcionario'
-        ]));
-        DB::commit();
-       return 'Registro atualizado com sucesso!';
+            $pessoa->update($req->only([
+                    'nome',
+                    'email',
+                    'telefone',
+                    'rg',
+                    'cpf',
+                    'data_nascimento',
+                    'funcionario'
+            ]));
+
+            DB::commit();
+            $msg = 'Registro atualizado com sucesso!';
+            return $msg;
         }catch(Exception $e){
             DB::rollback();
-            return "Houve um erro no atualizar: $e";
+            $msg = "Houve um erro no atualizar: $e";
+            return $msg;
         }
 
     }

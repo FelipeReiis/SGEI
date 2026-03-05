@@ -35,12 +35,21 @@ class AlunoController extends Controller
         $enderecoId = $this->enderecoService->store($req);
         $pessoaAlunoId = $this->pessoaService->store($req, $enderecoId);
         $this->alunoService->store($pessoaAlunoId, 5,6);
-        return route('Home');
+        return redirect()->route('Home');
     }
 
     public function edit($id){
-        $this->alunoService->edit($id);
-        return Inertia::render('Alunos/create_edit');
+       $aluno = $this->alunoService->edit($id);
+        return Inertia::render('Alunos/create_edit', [
+            'aluno' => $aluno,
+        ]);
+
+    }
+
+    public function update(Request $req, $id){
+        $this->enderecoService->update($req,$id);
+        $this->pessoaService->update($req, $id);
+        return redirect()->route('Home');
 
     }
 
