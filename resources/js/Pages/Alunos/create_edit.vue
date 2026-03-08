@@ -10,23 +10,25 @@
     const formulario = useForm({
         // Estrutura organizada por objetos
         aluno: {
-            id: props.aluno?.id ?? '',
-            nome: props.aluno?.nome ?? '',
-            email: props.aluno?.email ?? '',
-            telefone: props.aluno?.telefone ?? '',
-            rg: props.aluno?.rg ?? '',
-            cpf: props.aluno?.cpf ?? '',
-            data_nascimento: props.aluno?.data_nascimento ?? '',
-            cep: props.aluno?.cep ?? '',
-            logradouro: props.aluno?.logradouro ?? '',
-            bairro: props.aluno?.bairro ?? '',
-            complemento: props.aluno?.complemento ?? '',
+            id: props.aluno?.aluno_id ?? '',
+            nome: props.aluno?.aluno_nome ?? '',
+            email: props.aluno?.aluno_email ?? '',
+            telefone: props.aluno?.aluno_telefone ?? '',
+            rg: props.aluno?.aluno_rg ?? '',
+            cpf: props.aluno?.aluno_cpf ?? '',
+            data_nascimento: props.aluno?.aluno_data_nascimento ?? '',
+            cep: props.aluno?.aluno_cep ?? '',
+            logradouro: props.aluno?.aluno_logradouro ?? '',
+            bairro: props.aluno?.aluno_bairro ?? '',
+            complemento: props.aluno?.aluno_complemento ?? '',
             numero: props.aluno?.numero ?? '',
-            turma_id: props.aluno?.turma_id ?? '',
         },
-        pedagogico: props.aluno?.pedagogico ?? { nome: '', cpf: '', email: '', telefone: '', rg: '', data_nascimento: '', cep:'', logradouro: '', bairro:'', complemento:'', numero:''},
-        financeiro: props.aluno?.financeiro ?? { nome: '', cpf: '', email: '', telefone: '', rg: '', data_nascimento: '', cep:'', logradouro: '', bairro:'', complemento:'', numero:'' },
-        mesmo_responsavel: false
+        
+        pedagogico: props.aluno?.pedagogico ?? { nome: props.aluno?.pedag_nome ?? '', cpf:  props.aluno?.pedag_cpf ?? '', email:  props.aluno?.pedag_email ?? '', telefone: props.aluno?.pedag_telefone ?? '', rg:  props.aluno?.pedag_rg ?? '', data_nascimento:  props.aluno?.pedag_data_nascimento ?? '', cep: props.aluno?.pedag_cep ?? '', logradouro:  props.aluno?.pedag_logradouro ?? '', bairro: props.aluno?.pedag_bairro ?? '', complemento:  props.aluno?.pedag_complemento ?? '', id:props.aluno?.pedag_id ?? ''},
+
+        financeiro: props.aluno?.financeiro ??  { nome: props.aluno?.fin_nome ?? '', cpf:  props.aluno?.fin_cpf ?? '', email:  props.aluno?.fin_email ?? '', telefone: props.aluno?.fin_telefone ?? '', rg:  props.aluno?.fin_rg ?? '', data_nascimento:  props.aluno?.fin_data_nascimento ?? '', cep: props.aluno?.fin_cep ?? '', logradouro:  props.aluno?.fin_logradouro ?? '', bairro: props.aluno?.fin_bairro ?? '', complemento:props.aluno?.fin_complemento ?? '', id:props.aluno?.fin_id ?? ''},
+
+        mesmo_responsavel: props.aluno?.fin_id && props.aluno?.fin_id == props.aluno?.pedag_id ? true : false
     });
 
     // Lógica do Checkbox: Se marcar "mesmo responsável", copia o pedagógico para o financeiro
@@ -38,7 +40,7 @@
 
     const enviar = () => {
         const acao = props.aluno ? 'put' : 'post';
-        const rota = props.aluno ? route('alunos.update', props.aluno.id) : route('alunos.store');
+        const rota = props.aluno ? route('alunos.update', props.aluno.aluno_id) : route('alunos.store');
 
         formulario[acao](rota);
     };
@@ -57,13 +59,6 @@
         :mostrarEndereco="true"
         :erros="formulario.errors"
       >
-        <template #extra-field>
-            <label class="form-label">Turma</label>
-            <select v-model="formulario.aluno.turma_id" class="form-select custom-input">
-                <option value="">Selecione...</option>
-                <option value="1">9º Ano A</option>
-            </select>
-        </template>
       </FormSecaoPessoa>
 
       <div class="accordion mt-4" id="accordionResponsaveis">

@@ -11,11 +11,11 @@ defineOptions({ layout: MainLayout });
 
 // Configuração das Colunas
 const colunas = [
-  { label: 'ID', key: 'aluno_id', sortable: true },
-  { label: 'Aluno', key: 'aluno_nome', sortable: true }, // Slot personalizado
-  { label: 'Email', key: 'email', sortable: true },
-  { label: 'Status', key: 'status', sortable: false }, // Slot personalizado
-  { label: 'Ações', key: 'actions', sortable: false }, // Slot personalizado
+    { label: 'Aluno', key: 'aluno_nome', sortable: true }, // Slot personalizado
+    { label: 'Resp. Financeiro', key: 'fin_nome', sortable: true },
+    { label: 'Resp. Pedagógico', key: 'pedag_nome', sortable: true },
+    { label: 'Status', key: 'status', sortable: false }, // Slot personalizado
+    { label: 'Ações', key: 'actions', sortable: false }, // Slot personalizado
 ];
 
 // Estado da Busca

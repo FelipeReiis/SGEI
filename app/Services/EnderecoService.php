@@ -24,6 +24,10 @@ class EnderecoService
             if(isset($req->aluno)){
             $idEnderecos = [];
                 foreach($req->all() as $chave => $valor){
+                    if($chave == 'mesmo_responsavel'){
+                        break;
+                    }
+
                     $endereco = endereco::create([
                         'complemento' => $valor['complemento'],
                         'cep' => $valor['cep'],
@@ -31,7 +35,7 @@ class EnderecoService
                         'logradouro' => $valor['logradouro'],
                         'bairro' => $valor['bairro'],
                     ]);
-                    $idEnderecos = [$chave => $endereco->id];
+                    $idEnderecos[] = [$chave => $endereco->id];
 
                     if(isset($req->mesmo_responsavel) && $req->mesmo_responsavel && $chave == 'pedagogico'){
                         break;
@@ -65,8 +69,10 @@ class EnderecoService
     }
 
     public function update(Request $req, $id){
+
         DB::beginTransaction();
         try{
+            if()
             $id_end = pessoa::select('id_end')->where('id', $id)->first();
             $endereco = endereco::find($id_end->id_end);
 

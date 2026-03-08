@@ -34,7 +34,7 @@ class AlunoController extends Controller
     public function store(Request $req){
         $enderecoId = $this->enderecoService->store($req);
         $pessoaAlunoId = $this->pessoaService->store($req, $enderecoId);
-        $this->alunoService->store($pessoaAlunoId, 5,6);
+        $this->alunoService->store($pessoaAlunoId);
         return redirect()->route('Home');
     }
 

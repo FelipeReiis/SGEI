@@ -18,9 +18,15 @@ class PessoasService
     public function store(Request $req, $enderecoId){
         DB::beginTransaction();
         try{
+
             if(isset($req->aluno)){
+                $cont = 0;
                 $pessoasId = [];
                 foreach($req->all() as $chave => $valor){
+                    if($chave == 'mesmo_responsavel'){
+                        break;
+                    }
+
                     $pessoa = pessoa::create([
                         'nome' => $valor['nome'],
                         'email' => $valor['email'],
@@ -29,13 +35,14 @@ class PessoasService
                         'cpf' => $valor['cpf'],
                         'data_nascimento' => $valor['data_nascimento'],
                         'funcionario' => $valor['funcionario'] ?? 0,
-                        'id_end' => $enderecoId[$chave]
+                        'id_end' => $enderecoId[$cont][$chave]
                     ]);
-                    $pessoasId =  [$chave => $pessoa->id];
+                    $pessoasId[] =  [$chave => $pessoa->id];
 
                     if(isset($req->mesmo_responsavel) && $req->mesmo_responsavel && $chave == 'pedagogico'){
                         break;
                     }
+                    $cont++;
                 }
                 DB::commit();
                 return $pessoasId;
