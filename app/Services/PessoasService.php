@@ -18,18 +18,42 @@ class PessoasService
     public function store(Request $req, $enderecoId){
         DB::beginTransaction();
         try{
-        $pessoa = pessoa::create([
-            'nome' => $req->nome,
-            'email' => $req->email,
-            'telefone' => $req->telefone,
-            'rg' => $req->rg,
-            'cpf' => $req->cpf,
-            'data_nascimento' => $req->data_nascimento,
-            'funcionario' => $req->funcionario ?? 0,
-            'id_end' => $enderecoId
-        ]);
-            DB::commit();
-            return $pessoa->id;
+            if(isset($req->aluno)){
+                $pessoasId = [];
+                foreach($req->all() as $chave => $valor){
+                    $pessoa = pessoa::create([
+                        'nome' => $valor['nome'],
+                        'email' => $valor['email'],
+                        'telefone' => $valor['telefone'],
+                        'rg' => $valor['rg'],
+                        'cpf' => $valor['cpf'],
+                        'data_nascimento' => $valor['data_nascimento'],
+                        'funcionario' => $valor['funcionario'] ?? 0,
+                        'id_end' => $enderecoId[$chave]
+                    ]);
+                    $pessoasId =  [$chave => $pessoa->id];
+
+                    if(isset($req->mesmo_responsavel) && $req->mesmo_responsavel && $chave == 'pedagogico'){
+                        break;
+                    }
+                }
+                DB::commit();
+                return $pessoasId;
+            }else{
+                $pessoa = pessoa::create([
+                    'nome' => $req->nome,
+                    'email' => $req->email,
+                    'telefone' => $req->telefone,
+                    'rg' => $req->rg,
+                    'cpf' => $req->cpf,
+                    'data_nascimento' => $req->data_nascimento,
+                    'funcionario' => $req->funcionario ?? 0,
+                    'id_end' => $enderecoId
+                ]);
+                DB::commit();
+                return $pessoa->id;
+            }
+
         }catch(Exception $e){
             dd($e);
             DB::rollback();

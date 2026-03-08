@@ -20,10 +20,26 @@ class EnderecoService
 
     public function store(Request $req){
         DB::beginTransaction();
-        foreach($req->all() as $chave => $valor){
-            dd($chave);
-        }
         try{
+            if(isset($req->aluno)){
+            $idEnderecos = [];
+                foreach($req->all() as $chave => $valor){
+                    $endereco = endereco::create([
+                        'complemento' => $valor['complemento'],
+                        'cep' => $valor['cep'],
+                        'numero' => 121,
+                        'logradouro' => $valor['logradouro'],
+                        'bairro' => $valor['bairro'],
+                    ]);
+                    $idEnderecos = [$chave => $endereco->id];
+
+                    if(isset($req->mesmo_responsavel) && $req->mesmo_responsavel && $chave == 'pedagogico'){
+                        break;
+                    }
+                }
+            DB::commit();
+            return $idEnderecos;
+        }else{
             $endereco = endereco::create([
                 'complemento' => $req->complemento,
                 'cep' => $req->cep,
@@ -33,6 +49,8 @@ class EnderecoService
             ]);
             DB::commit();
             return $endereco->id;
+        }
+
         }catch(Exception $e){
             DB::rollback();
             return "Ocorreu um erro ao cadastrar: $e";

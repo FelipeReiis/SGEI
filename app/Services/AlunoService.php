@@ -39,9 +39,9 @@ class AlunoService
 
         try{
             Aluno::create([
-                'id_resp_fin' => 1,
-                'id_resp_pedag' => 1,
-                'id_pessoa' => $idPessoaAluno,
+                'id_resp_fin' => isset($idPessoaAluno['financeiro']) ? $idPessoaAluno['financeiro'] : $idPessoaAluno['pedagogico'],
+                'id_resp_pedag' => $idPessoaAluno['pedagogico'],
+                'id_pessoa' => $idPessoaAluno['aluno'],
                 'id_turma' => null
             ]);
             DB::commit();
