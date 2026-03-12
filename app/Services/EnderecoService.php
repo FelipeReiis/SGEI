@@ -69,10 +69,37 @@ class EnderecoService
     }
 
     public function update(Request $req, $id){
-
+        
         DB::beginTransaction();
+
         try{
-            if()
+
+            if(isset($req->aluno)){
+                foreach($req->all() as $chave => $valor){
+                    if($chave == 'mesmo_responsavel'){
+                        break;
+                    }
+
+                    $id_end = pessoa::select('id_end')->where('id', $valor['id'])->first();
+                    $endereco = endereco::find($id_end->id_end);
+
+                    $endereco->update([
+                        'complemento' => $valor['complemento'],
+                        'cep' => $valor['cep'],
+                        'numero' => 121,
+                        'logradouro' => $valor['logradouro'],
+                        'bairro' => $valor['bairro'],
+                    ]);
+
+                    if(isset($req->mesmo_responsavel) && $req->mesmo_responsavel && $chave == 'pedagogico'){
+                        break;
+                    }
+                }
+                DB::commit();
+                $msg = 'Registros atualizados com sucesso!';
+                return $msg;
+            }
+
             $id_end = pessoa::select('id_end')->where('id', $id)->first();
             $endereco = endereco::find($id_end->id_end);
 
@@ -88,6 +115,7 @@ class EnderecoService
             $msg = 'Registro atualizado com sucesso!';
             return $msg;
         }catch(Exception $e){
+            dd($e);
             DB::rollback();
             $msg = "Erro ao atualizar registro: $e";
             return $msg;

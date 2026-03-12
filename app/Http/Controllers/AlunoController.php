@@ -47,9 +47,13 @@ class AlunoController extends Controller
     }
 
     public function update(Request $req, $id){
-        $this->enderecoService->update($req,$id);
-        $this->pessoaService->update($req, $id);
-        return redirect()->route('Home');
+        try{
+            $this->enderecoService->update($req,$id);
+            $this->pessoaService->update($req, $id);
+            return redirect()->route('Home');
+        }catch(\Excepetion $e){
+            dd($e);
+        }
 
     }
 

@@ -80,6 +80,32 @@ class PessoasService
     public function update(Request $req, $id){
         DB::beginTransaction();
         try{
+            if(isset($req->aluno)){
+
+                foreach($req->all() as $chave => $valor){
+                    if($chave == 'mesmo_responsavel'){
+                        break;
+                    }
+                    $pessoa = pessoa::find($valor['id']);
+
+                    $pessoa->update([
+                        'nome' => $valor['nome'],
+                        'email' => $valor['email'],
+                        'telefone' => $valor['telefone'],
+                        'rg' => $valor['rg'],
+                        'cpf' => $valor['cpf'],
+                        'data_nascimento' => $valor['data_nascimento'],
+                        'funcionario' => $valor['funcionario'] ?? 0,
+                    ]);
+
+                    if(isset($req->mesmo_responsavel) && $req->mesmo_responsavel && $chave == 'pedagogico'){
+                        break;
+                    }
+                }
+                DB::commit();
+                $msg = 'Registros atualizados com sucesso!';
+                return $msg;
+            }
             $pessoa = pessoa::find($id);
 
             $pessoa->update($req->only([
