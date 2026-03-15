@@ -3,37 +3,40 @@
     import Topo from '@/Components/Topo.vue';
     import MenuLateral from '@/Components/MenuLateral.vue';
     import Rodape from '@/Components/Rodape.vue';
+    import FlashMessage from '@/Components/FlashMessage.vue';
 
     const isSidebarOpen = ref(true);
 </script>
 
 <template>
-  <div class="layout-grid" :class="{ 'menu-closed': !isSidebarOpen }">
 
-    <aside class="area-sidebar">
-      <div class="logo-area">
-        <h1 v-show="isSidebarOpen">Sistema</h1>
-        <button class="toggle-btn" @click="isSidebarOpen = !isSidebarOpen">
-          <span v-if="isSidebarOpen">«</span>
-          <span v-else>»</span>
-        </button>
-      </div>
-      <MenuLateral :isOpen="isSidebarOpen" />
-    </aside>
 
-    <header class="area-header">
-      <Topo />
-    </header>
+    <div class="layout-grid" :class="{ 'menu-closed': !isSidebarOpen }">
+        <aside class="area-sidebar">
+        <div class="logo-area">
+            <h1 v-show="isSidebarOpen">Sistema</h1>
+            <button class="toggle-btn" @click="isSidebarOpen = !isSidebarOpen">
+            <span v-if="isSidebarOpen">«</span>
+            <span v-else>»</span>
+            </button>
+        </div>
+        <MenuLateral :isOpen="isSidebarOpen" />
+        </aside>
 
-    <main class="area-content">
-      <slot />
-    </main>
+        <header class="area-header">
+        <Topo />
+        </header>
 
-    <footer class="area-footer">
-      <Rodape />
-    </footer>
+        <main class="area-content">
+            <FlashMessage />
+            <slot />
+        </main>
 
-  </div>
+        <footer class="area-footer">
+        <Rodape />
+        </footer>
+
+    </div>
 </template>
 
 <style scoped>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\AlunoService;
 use App\Services\EnderecoService;
 use App\Services\PessoasService;
+use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -32,10 +33,17 @@ class AlunoController extends Controller
     }
 
     public function store(Request $req){
-        $enderecoId = $this->enderecoService->store($req);
-        $pessoaAlunoId = $this->pessoaService->store($req, $enderecoId);
-        $this->alunoService->store($pessoaAlunoId);
-        return redirect()->route('Home');
+        try{
+            $dados = $req->validated();
+            $enderecoId = $this->enderecoService->store($dados);
+            $pessoaAlunoId = $this->pessoaService->store($dados, $enderecoId);
+            $this->alunoService->store($pessoaAlunoId);
+            return redirect()->route('alunos.index')->with('sucesso', 'Aluno cadastrado com sucesso!');
+
+        }catch(Exception $e){
+            return redirect()->route('alunos.index')->with('erro', 'houve um erro ao tentar cadastrar: '.$e );
+        }
+
     }
 
     public function edit($id){
@@ -48,11 +56,12 @@ class AlunoController extends Controller
 
     public function update(Request $req, $id){
         try{
-            $this->enderecoService->update($req,$id);
-            $this->pessoaService->update($req, $id);
-            return redirect()->route('Home');
-        }catch(\Excepetion $e){
-            dd($e);
+            $dados = $req->validated();
+            $alunoEnd = $this->enderecoService->update($dados,$id);
+            $alunoMsg = $this->pessoaService->update($dados, $id);
+            return redirect()->route('alunos.index')->with('sucesso', $alunoMsg);
+        }catch(Exception $e){
+            return redirect()->route('alunos.index')->with('erro', 'houve um erro ao tentar atualizar os dados: '.$e);
         }
 
     }

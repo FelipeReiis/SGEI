@@ -69,7 +69,7 @@ class EnderecoService
     }
 
     public function update(Request $req, $id){
-        
+
         DB::beginTransaction();
 
         try{
