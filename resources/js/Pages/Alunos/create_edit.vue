@@ -23,11 +23,12 @@
             complemento: props.aluno?.aluno_complemento ?? '',
             numero: props.aluno?.numero ?? '',
         },
-        
+
         pedagogico: props.aluno?.pedagogico ?? { nome: props.aluno?.pedag_nome ?? '', cpf:  props.aluno?.pedag_cpf ?? '', email:  props.aluno?.pedag_email ?? '', telefone: props.aluno?.pedag_telefone ?? '', rg:  props.aluno?.pedag_rg ?? '', data_nascimento:  props.aluno?.pedag_data_nascimento ?? '', cep: props.aluno?.pedag_cep ?? '', logradouro:  props.aluno?.pedag_logradouro ?? '', bairro: props.aluno?.pedag_bairro ?? '', complemento:  props.aluno?.pedag_complemento ?? '', id:props.aluno?.pedag_id ?? ''},
 
-        financeiro: props.aluno?.financeiro ??  { nome: props.aluno?.fin_nome ?? '', cpf:  props.aluno?.fin_cpf ?? '', email:  props.aluno?.fin_email ?? '', telefone: props.aluno?.fin_telefone ?? '', rg:  props.aluno?.fin_rg ?? '', data_nascimento:  props.aluno?.fin_data_nascimento ?? '', cep: props.aluno?.fin_cep ?? '', logradouro:  props.aluno?.fin_logradouro ?? '', bairro: props.aluno?.fin_bairro ?? '', complemento:props.aluno?.fin_complemento ?? '', id:props.aluno?.fin_id ?? ''},
+        financeiro: props.aluno?.financeiro ??  { nome: props.aluno?.fin_nome ?? '', cpf:  props.aluno?.fin_cpf ?? '', email:  props.aluno?.fin_email ?? '', telefone: props.aluno?.fin_telefone ?? '', rg: props.aluno?.fin_rg ?? '', data_nascimento:  props.aluno?.fin_data_nascimento ?? '', cep: props.aluno?.fin_cep ?? '', logradouro: props.aluno?.fin_logradouro ?? '', bairro: props.aluno?.fin_bairro ?? '', complemento:props.aluno?.fin_complemento ?? '', id:props.aluno?.fin_id ?? '',agencia: props.aluno?.agencia, conta: props.aluno?.conta, pix: props.aluno?.pix, banco: props.aluno?.banco },
 
+        bancario: props.aluno?.banco ?? {agencia: props.aluno?.agencia, conta: props.aluno?.conta, pix: props.aluno?.pix, banco: props.aluno?.banco},
         mesmo_responsavel: props.aluno?.fin_id && props.aluno?.fin_id == props.aluno?.pedag_id ? true : false
     });
 
@@ -46,6 +47,7 @@
     };
     const abertoPedagogico = ref(false);
     const abertoFinanceiro = ref(false);
+    const abertoBanco = ref(false);
 </script>
 
 <template>
@@ -56,6 +58,7 @@
         v-model="formulario.aluno"
         titulo="Dados do Aluno"
         icon="👤"
+        :mostrarPessoa="true"
         :mostrarEndereco="true"
         :erros="formulario.errors"
       >
@@ -70,7 +73,7 @@
             </div>
 
             <div v-show="abertoPedagogico" class="p-4 border-top">
-                <FormSecaoPessoa v-model="formulario.pedagogico" titulo="Informações" icon="🛡️" :mostrarEndereco="true" :erros="formulario.errors"/>
+                <FormSecaoPessoa v-model="formulario.pedagogico" titulo="Informações" icon="🛡️" :mostrarPessoa="true" :mostrarEndereco="true" :erros="formulario.errors"/>
             </div>
         </div>
 
@@ -86,7 +89,12 @@
             </div>
 
             <div v-show="abertoFinanceiro" class="p-4 border-top">
-                <FormSecaoPessoa v-model="formulario.financeiro" titulo="Informações" icon="🛡️" :mostrarEndereco="true" :erros="formulario.errors"/>
+                <FormSecaoPessoa v-model="formulario.financeiro" titulo="Informações" icon="🛡️" :mostrarPessoa="true" :mostrarEndereco="true" :erros="formulario.errors"/>
+                <FormSecaoPessoa v-model="formulario.bancario" titulo="Dados Bancários" :mostrarBanco="true" :mostrarEndereco="false" :mostrarPessoa="false" :erros="formulario.errors"/>
+            </div>
+
+            <div v-show="abertoBanco" class="p-4 border-top">
+
             </div>
         </div>
 

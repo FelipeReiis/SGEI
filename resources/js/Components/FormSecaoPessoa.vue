@@ -8,7 +8,9 @@
         titulo: String,
         icon: String,
         erros: Object,      // Para mostrar validações do Laravel
-        mostrarEndereco: { type: Boolean, default: false }
+        mostrarPessoa: { type: Boolean, default: false },
+        mostrarEndereco: { type: Boolean, default: false },
+        mostrarBanco: { type: Boolean, default: false }
     });
 
     watch(() => props.modelValue.cep, async(novoCep)=>{
@@ -33,7 +35,7 @@
     </h5>
     <hr class="mb-4">
 
-    <div class="row g-3">
+    <div class="row g-3" v-if="mostrarPessoa">
       <div class="col-md-4">
         <label class="form-label">Nome Completo*</label>
         <input type="text" v-model="modelValue.nome" class="form-control custom-input" :class="{'is-invalid': erros?.nome}" required>
@@ -87,6 +89,25 @@
       <div class="col-md-4">
         <label class="form-label">Complemento</label>
         <input type="text" v-model="modelValue.complemento" class="form-control custom-input" :class="{'is-invalid': erros?.complemento}" required>
+      </div>
+    </div>
+
+    <div v-if="mostrarBanco" class="row g-3 mt-2">
+      <div class="col-md-3">
+        <label class="form-label">Agencia</label>
+        <input type="text" @input="modelValue.agencia = maskCEP($event.target.value)" class="form-control custom-input" :value="modelValue.agencia" maxlength="9" :class="{'is-invalid': erros?.agencia}" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Conta</label>
+        <input type="text" v-model="modelValue.conta" class="form-control custom-input" :class="{'is-invalid': erros?.conta}" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Chave Pix</label>
+        <input type="text" v-model="modelValue.pix" class="form-control custom-input" :class="{'is-invalid': erros?.pix}" required>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Banco</label>
+        <input type="text" v-model="modelValue.banco" class="form-control custom-input" :class="{'is-invalid': erros?.banco}" >
       </div>
     </div>
   </div>
