@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('dado_bancarios', function (Blueprint $table) {
             $table->id();
             $table->char('banco', length:20);
-            $table->char('agencia', length:6);
+            $table->char('agencia', length:8);
             $table->char('conta', length:14);
             $table->char('pix', length:50);
             $table->unsignedBigInteger('id_pessoa');

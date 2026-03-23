@@ -57,9 +57,10 @@ class AlunoService
                         ->join('pessoas as pedag_pessoa', 'alunos.id_resp_pedag', 'pedag_pessoa.id')
                         ->join('pessoas as fin_pessoa', 'alunos.id_resp_fin', '=', 'fin_pessoa.id')
                         ->join('enderecos as aluno_end', 'aluno_pessoa.id_end', '=', 'aluno_end.id')
+                        ->join('dado_bancarios as banco', 'fin_pessoa.id', '=', 'banco.id_pessoa')
                         ->leftJoin('enderecos as pedag_end', 'pedag_pessoa.id_end', '=', 'pedag_end.id')
                         ->leftJoin('enderecos as fin_end', 'fin_pessoa.id_end', '=', 'fin_end.id')
-                    ->where('aluno_pessoa.id', $id)
+                        ->where('aluno_pessoa.id', $id)
                     ->select(
                                 'aluno_pessoa.id as aluno_id',
                                 'aluno_end.id as id_aluno_end',
@@ -98,6 +99,11 @@ class AlunoService
                                 'fin_end.complemento as fin_complemento',
                                 'fin_end.bairro as fin_bairro',
                                 'fin_end.numero as fin_numero',
+                                'banco.id as banco_id',
+                                'banco.agencia',
+                                'banco.conta',
+                                'banco.pix',
+                                'banco.banco',
                     )->first();
             return $aluno;
 

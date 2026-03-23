@@ -10,11 +10,12 @@ use Illuminate\Support\Facades\DB;
 class DadosBancarios{
 
 
-    public function store(Request $req){
+    public function store($req, $pessoasId){
         DB::beginTransaction();
         try{
             if(isset($req->aluno)){
                 DadoBancario::create([
+                    'id_pessoa' => isset($pessoasId[2]['financeiro']) ? $pessoasId[2]['financeiro'] : $pessoasId[1]['pedagogico'] ,
                     'agencia' => $req->bancario['agencia'],
                     'conta' => $req->bancario['conta'],
                     'banco' => $req->bancario['banco'],
@@ -26,6 +27,7 @@ class DadosBancarios{
             }
 
             DadoBancario::create([
+                'id_pessoa' => $pessoasId,
                 'agencia' => $req->agencia,
                 'conta' => $req->conta,
                 'banco' => $req->banco,
@@ -36,8 +38,28 @@ class DadosBancarios{
                 return true;
 
         }catch(Exception $e){
+            dd($e);
             DB::rollback();
             return "Ocorreu um erro ao cadastrar os dados bancarios: $e";
+        }
+    }
+
+    public function update($req){
+        DB::beginTransaction();
+        try{
+            $dadoBancario = DadoBancario::where('id_pessoa', $req->financeiro['id'])->first();
+
+            $dadoBancario->update([
+                'agencia' => $req->bancario['agencia'],
+                'conta' => $req->bancario['conta'],
+                'banco' => $req->bancario['banco'],
+                'pix' => $req->bancario['pix'],
+            ]);
+
+            DB::commit();
+        }catch(Exception $e){
+            DB::rollback();
+            return "Ocorreu um erro ao atualizar os dados bancarios: $e";
         }
     }
 }

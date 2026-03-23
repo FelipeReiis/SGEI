@@ -21,19 +21,20 @@ class EnderecoService
     public function store(Request $req){
         DB::beginTransaction();
         try{
+            $limpar = fn($valor) => preg_replace('/\D/', '', $valor);
             if(isset($req->aluno)){
             $idEnderecos = [];
                 foreach($req->all() as $chave => $valor){
-                    if($chave == 'mesmo_responsavel'){
+                    if($chave == 'mesmo_responsavel' or $chave == 'bancario'){
                         break;
                     }
 
                     $endereco = endereco::create([
-                        'complemento' => $valor['complemento'],
-                        'cep' => $valor['cep'],
-                        'numero' => 121,
-                        'logradouro' => $valor['logradouro'],
-                        'bairro' => $valor['bairro'],
+                        'complemento' => trim($valor['complemento']),
+                        'cep' => trim($limpar($valor['cep'])),
+                        'numero' =>  trim($valor['numero']),
+                        'logradouro' => trim($valor['logradouro']),
+                        'bairro' => trim($valor['bairro']),
                     ]);
                     $idEnderecos[] = [$chave => $endereco->id];
 
@@ -45,17 +46,18 @@ class EnderecoService
             return $idEnderecos;
         }else{
             $endereco = endereco::create([
-                'complemento' => $req->complemento,
-                'cep' => $req->cep,
-                'numero' => 121,
-                'logradouro' => $req->logradouro,
-                'bairro' => $req->bairro,
+                'complemento' => trim($req->complemento),
+                'cep' => trim($limpar($req->cep)),
+                'numero' =>trim($req->numero),
+                'logradouro' =>trim($req->logradouro),
+                'bairro' =>trim($req->bairro),
             ]);
             DB::commit();
             return $endereco->id;
         }
 
         }catch(Exception $e){
+            dd($e);
             DB::rollback();
             return "Ocorreu um erro ao cadastrar: $e";
         }
@@ -69,26 +71,25 @@ class EnderecoService
     }
 
     public function update(Request $req, $id){
-
         DB::beginTransaction();
-
         try{
-
+            $limpar = fn($valor) => preg_replace('/\D/', '', $valor);
             if(isset($req->aluno)){
                 foreach($req->all() as $chave => $valor){
-                    if($chave == 'mesmo_responsavel'){
+                    if($chave == 'mesmo_responsavel' or $chave == 'bancario'){
                         break;
                     }
 
                     $id_end = pessoa::select('id_end')->where('id', $valor['id'])->first();
+
                     $endereco = endereco::find($id_end->id_end);
 
                     $endereco->update([
-                        'complemento' => $valor['complemento'],
-                        'cep' => $valor['cep'],
-                        'numero' => 121,
-                        'logradouro' => $valor['logradouro'],
-                        'bairro' => $valor['bairro'],
+                        'complemento' => trim($valor['complemento']),
+                        'cep' => trim($limpar($valor['cep'])),
+                        'numero' => trim($valor['numero']),
+                        'logradouro' => trim($valor['logradouro']),
+                        'bairro' => trim($valor['bairro']),
                     ]);
 
                     if(isset($req->mesmo_responsavel) && $req->mesmo_responsavel && $chave == 'pedagogico'){
@@ -103,13 +104,13 @@ class EnderecoService
             $id_end = pessoa::select('id_end')->where('id', $id)->first();
             $endereco = endereco::find($id_end->id_end);
 
-            $endereco->update($req->only([
-                'complemento',
-                'cep',
-                'numero',
-                'bairro',
-                'logradouro'
-            ]));
+            $endereco->update([
+                'complemento' => trim($req->complemento),
+                'cep' => trim($limpar($req->cep)),
+                'numero' => trim($req->numero),
+                'bairro' => trim($req->bairro),
+                'logradouro' => trim($req->logradouro)
+            ]);
 
             DB::commit();
             $msg = 'Registro atualizado com sucesso!';

@@ -18,23 +18,24 @@ class PessoasService
     public function store(Request $req, $enderecoId){
         DB::beginTransaction();
         try{
+            $limpar = fn($valor) => preg_replace('/\D/', '', $valor);
 
             if(isset($req->aluno)){
                 $cont = 0;
                 $pessoasId = [];
                 foreach($req->all() as $chave => $valor){
-                    if($chave == 'mesmo_responsavel'){
+                    if($chave == 'mesmo_responsavel' or $chave == 'bancario'){
                         break;
                     }
 
                     $pessoa = pessoa::create([
-                        'nome' => $valor['nome'],
-                        'email' => $valor['email'],
-                        'telefone' => $valor['telefone'],
-                        'rg' => $valor['rg'],
-                        'cpf' => $valor['cpf'],
-                        'data_nascimento' => $valor['data_nascimento'],
-                        'funcionario' => $valor['funcionario'] ?? 0,
+                        'nome' => trim($valor['nome']),
+                        'email' => trim($valor['email']),
+                        'telefone' => trim($limpar($valor['telefone'])),
+                        'rg' => trim($valor['rg']),
+                        'cpf' => trim($limpar($valor['cpf'])),
+                        'data_nascimento' => trim($valor['data_nascimento']),
+                        'funcionario' => trim($valor['funcionario'] ?? 0) ,
                         'id_end' => $enderecoId[$cont][$chave]
                     ]);
                     $pessoasId[] =  [$chave => $pessoa->id];
@@ -48,13 +49,13 @@ class PessoasService
                 return $pessoasId;
             }else{
                 $pessoa = pessoa::create([
-                    'nome' => $req->nome,
-                    'email' => $req->email,
-                    'telefone' => $req->telefone,
-                    'rg' => $req->rg,
-                    'cpf' => $req->cpf,
-                    'data_nascimento' => $req->data_nascimento,
-                    'funcionario' => $req->funcionario ?? 0,
+                    'nome' => trim($req->nome),
+                    'email' => trim($req->email),
+                    'telefone' => trim($limpar($req->telefone)),
+                    'rg' => trim($req->rg),
+                    'cpf' => trim($limpar($req->cpf)),
+                    'data_nascimento' => trim($req->data_nascimento),
+                    'funcionario' => trim($req->funcionario ?? 0 ) ,
                     'id_end' => $enderecoId
                 ]);
                 DB::commit();
@@ -80,22 +81,23 @@ class PessoasService
     public function update(Request $req, $id){
         DB::beginTransaction();
         try{
+            $limpar = fn($valor) => preg_replace('/\D/', '', $valor);
             if(isset($req->aluno)){
 
                 foreach($req->all() as $chave => $valor){
-                    if($chave == 'mesmo_responsavel'){
+                   if($chave == 'mesmo_responsavel' or $chave == 'bancario'){
                         break;
                     }
                     $pessoa = pessoa::find($valor['id']);
 
                     $pessoa->update([
-                        'nome' => $valor['nome'],
-                        'email' => $valor['email'],
-                        'telefone' => $valor['telefone'],
-                        'rg' => $valor['rg'],
-                        'cpf' => $valor['cpf'],
-                        'data_nascimento' => $valor['data_nascimento'],
-                        'funcionario' => $valor['funcionario'] ?? 0,
+                        'nome' => trim($valor['nome']),
+                        'email' => trim($valor['email']),
+                        'telefone' => trim($limpar($valor['telefone'])),
+                        'rg' => trim($valor['rg']),
+                        'cpf' => trim($limpar($valor['cpf'])),
+                        'data_nascimento' => trim($valor['data_nascimento']),
+                        'funcionario' => trim($valor['funcionario'] ?? 0),
                     ]);
 
                     if(isset($req->mesmo_responsavel) && $req->mesmo_responsavel && $chave == 'pedagogico'){
@@ -108,15 +110,15 @@ class PessoasService
             }
             $pessoa = pessoa::find($id);
 
-            $pessoa->update($req->only([
-                    'nome',
-                    'email',
-                    'telefone',
-                    'rg',
-                    'cpf',
-                    'data_nascimento',
-                    'funcionario'
-            ]));
+            $pessoa->update([
+                    'nome' => trim($req->nome),
+                    'email' => trim($req->email),
+                    'telefone' => trim($limpar($req->telefone)),
+                    'rg' => trim($req->rg),
+                    'cpf' => $limpar($req->cpf),
+                    'data_nascimento' => trim($req->data_nascimento),
+                    'funcionario' => trim($req->funcionario ?? 0),
+                ]);
 
             DB::commit();
             $msg = 'Registro atualizado com sucesso!';

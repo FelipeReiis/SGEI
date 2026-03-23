@@ -6,7 +6,6 @@
 
     defineOptions({ layout: MainLayout });
     const props = defineProps({ aluno: Object });
-
     const formulario = useForm({
         // Estrutura organizada por objetos
         aluno: {
@@ -21,17 +20,17 @@
             logradouro: props.aluno?.aluno_logradouro ?? '',
             bairro: props.aluno?.aluno_bairro ?? '',
             complemento: props.aluno?.aluno_complemento ?? '',
-            numero: props.aluno?.numero ?? '',
+            numero: props.aluno?.aluno_numero ?? '',
         },
 
-        pedagogico: props.aluno?.pedagogico ?? { nome: props.aluno?.pedag_nome ?? '', cpf:  props.aluno?.pedag_cpf ?? '', email:  props.aluno?.pedag_email ?? '', telefone: props.aluno?.pedag_telefone ?? '', rg:  props.aluno?.pedag_rg ?? '', data_nascimento:  props.aluno?.pedag_data_nascimento ?? '', cep: props.aluno?.pedag_cep ?? '', logradouro:  props.aluno?.pedag_logradouro ?? '', bairro: props.aluno?.pedag_bairro ?? '', complemento:  props.aluno?.pedag_complemento ?? '', id:props.aluno?.pedag_id ?? ''},
+        pedagogico: props.aluno?.pedagogico ?? { nome: props.aluno?.pedag_nome ?? '', cpf:  props.aluno?.pedag_cpf ?? '', email:  props.aluno?.pedag_email ?? '', telefone: props.aluno?.pedag_telefone ?? '', rg:  props.aluno?.pedag_rg ?? '', data_nascimento:  props.aluno?.pedag_data_nascimento ?? '', cep: props.aluno?.pedag_cep ?? '', logradouro:  props.aluno?.pedag_logradouro ?? '', bairro: props.aluno?.pedag_bairro ?? '', complemento:  props.aluno?.pedag_complemento ?? '', id:props.aluno?.pedag_id ?? '', numero:props.aluno?.pedag_numero ?? ''},
 
-        financeiro: props.aluno?.financeiro ??  { nome: props.aluno?.fin_nome ?? '', cpf:  props.aluno?.fin_cpf ?? '', email:  props.aluno?.fin_email ?? '', telefone: props.aluno?.fin_telefone ?? '', rg: props.aluno?.fin_rg ?? '', data_nascimento:  props.aluno?.fin_data_nascimento ?? '', cep: props.aluno?.fin_cep ?? '', logradouro: props.aluno?.fin_logradouro ?? '', bairro: props.aluno?.fin_bairro ?? '', complemento:props.aluno?.fin_complemento ?? '', id:props.aluno?.fin_id ?? '',agencia: props.aluno?.agencia, conta: props.aluno?.conta, pix: props.aluno?.pix, banco: props.aluno?.banco },
+        financeiro: props.aluno?.financeiro ??  { nome: props.aluno?.fin_nome ?? '', cpf:  props.aluno?.fin_cpf ?? '', email:  props.aluno?.fin_email ?? '', telefone: props.aluno?.fin_telefone ?? '', rg: props.aluno?.fin_rg ?? '', data_nascimento:  props.aluno?.fin_data_nascimento ?? '', cep: props.aluno?.fin_cep ?? '', logradouro: props.aluno?.fin_logradouro ?? '', bairro: props.aluno?.fin_bairro ?? '', complemento:props.aluno?.fin_complemento ?? '', id:props.aluno?.fin_id ?? '', numero:props.aluno?.fin_numero ?? ''},
 
-        bancario: props.aluno?.banco ?? {agencia: props.aluno?.agencia, conta: props.aluno?.conta, pix: props.aluno?.pix, banco: props.aluno?.banco},
+        bancario: props.aluno?.bancario ?? {agencia: props.aluno?.agencia ?? '', conta: props.aluno?.conta ?? '', pix: props.aluno?.pix ?? '', banco: props.aluno?.banco ?? ''},
+
         mesmo_responsavel: props.aluno?.fin_id && props.aluno?.fin_id == props.aluno?.pedag_id ? true : false
     });
-
     // Lógica do Checkbox: Se marcar "mesmo responsável", copia o pedagógico para o financeiro
     watch(() => formulario.mesmo_responsavel, (valor) => {
         if (valor) {

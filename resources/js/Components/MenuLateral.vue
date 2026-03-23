@@ -20,19 +20,19 @@ const menuItems = [
     icon: '📂',
     children: [
       { label: 'Alunos', route: '/alunos' },
-      { label: 'Fornecedores', route: '/fornecedores' },
-      { label: 'Produtos', route: '/produtos' }
+    //   { label: 'Fornecedores', route: '/fornecedores' },
+    //   { label: 'Produtos', route: '/produtos' }
     ]
   },
-  {
-    label: 'Financeiro',
-    icon: '💲',
-    children: [
-      { label: 'Contas a Pagar', route: '/contas-pagar' },
-      { label: 'Contas a Receber', route: '/contas-receber' }
-    ]
-  },
-  { label: 'Configurações', icon: '⚙️', route: '/config' },
+//   {
+//     label: 'Financeiro',
+//     icon: '💲',
+//     children: [
+//       { label: 'Contas a Pagar', route: '/contas-pagar' },
+//       { label: 'Contas a Receber', route: '/contas-receber' }
+//     ]
+//   },
+//   { label: 'Configurações', icon: '⚙️', route: '/config' },
 ];
 </script>
 
