@@ -60,6 +60,7 @@
         :mostrarPessoa="true"
         :mostrarEndereco="true"
         :erros="formulario.errors"
+        prefixo="aluno"
       >
       </FormSecaoPessoa>
 
@@ -72,7 +73,7 @@
             </div>
 
             <div v-show="abertoPedagogico" class="p-4 border-top">
-                <FormSecaoPessoa v-model="formulario.pedagogico" titulo="Informações" icon="🛡️" :mostrarPessoa="true" :mostrarEndereco="true" :erros="formulario.errors"/>
+                <FormSecaoPessoa v-model="formulario.pedagogico" titulo="Informações" icon="🛡️" :mostrarPessoa="true" :mostrarEndereco="true" prefixo="financeiro" :erros="formulario.errors"/>
             </div>
         </div>
 
@@ -88,8 +89,8 @@
             </div>
 
             <div v-show="abertoFinanceiro" class="p-4 border-top">
-                <FormSecaoPessoa v-model="formulario.financeiro" titulo="Informações" icon="🛡️" :mostrarPessoa="true" :mostrarEndereco="true" :erros="formulario.errors"/>
-                <FormSecaoPessoa v-model="formulario.bancario" titulo="Dados Bancários" :mostrarBanco="true" :mostrarEndereco="false" :mostrarPessoa="false" :erros="formulario.errors"/>
+                <FormSecaoPessoa v-model="formulario.financeiro" titulo="Informações" icon="🛡️" :mostrarPessoa="true" :mostrarEndereco="true" prefixo="financeiro" :erros="formulario.errors"/>
+                <FormSecaoPessoa v-model="formulario.bancario" titulo="Dados Bancários" :mostrarBanco="true" :mostrarEndereco="false" :mostrarPessoa="false"  prefixo="bancario" :erros="formulario.errors"/>
             </div>
 
             <div v-show="abertoBanco" class="p-4 border-top">
