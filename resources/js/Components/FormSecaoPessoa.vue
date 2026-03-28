@@ -1,5 +1,5 @@
 <script setup>
-    import { maskCPF, maskTelefone, maskCEP } from '@/utils/mascaras';
+    import { maskCPF, maskRG,maskTelefone, maskCEP } from '@/utils/mascaras';
     import { buscarCep } from '@/utils/cepService';
     import {watch} from 'vue';
 
@@ -61,7 +61,7 @@
 
       <div class="col-md-4">
         <label class="form-label">E-mail</label>
-        <input type="email" v-model="modelValue.email" class="form-control custom-input"  :class="{'is-invalid': erros?.[`${prefixo}.email`]}" >
+        <input type="email" v-model="modelValue.email" class="form-control custom-input"  :class="{'is-invalid': erros?.[`${prefixo}.email`]}" maxlength="50">
         <div v-if="erros?.[`${prefixo}.email`]" class="invalid-feedback">
             {{ erros[`${prefixo}.email`] }}
          </div>
@@ -77,7 +77,7 @@
 
       <div class="col-md-4">
         <label class="form-label">RG*</label>
-        <input type="text" v-model="modelValue.rg" class="form-control custom-input" :class="{'is-invalid': erros?.[`${prefixo}.rg`]}" >
+        <input type="text"  @input="modelValue.rg = maskRG($event.target.value)" class="form-control custom-input" :class="{'is-invalid': erros?.[`${prefixo}.rg`]}" maxlength="12" :value="modelValue.rg">
         <div v-if="erros?.[`${prefixo}.rg`]" class="invalid-feedback">
             {{ erros[`${prefixo}.rg`] }}
          </div>
@@ -148,22 +148,22 @@
       </div>
       <div class="col-md-4">
         <label class="form-label">Conta</label>
-        <input type="text" v-model="modelValue.conta" class="form-control custom-input"  :class="{'is-invalid': erros?.[`${prefixo}.conta`]}" >
+        <input type="text" v-model="modelValue.conta" class="form-control custom-input"  :class="{'is-invalid': erros?.[`${prefixo}.conta`]}" maxlength="14">
         <div v-if="erros?.[`${prefixo}.conta`]" class="invalid-feedback">
             {{ erros[`${prefixo}.conta`] }}
          </div>
       </div>
       <div class="col-md-4">
         <label class="form-label">Chave Pix</label>
-        <input type="text" v-model="modelValue.pix" class="form-control custom-input"  :class="{'is-invalid': erros?.[`${prefixo}.pix`]}" >
+        <input type="text" v-model="modelValue.pix" class="form-control custom-input"  :class="{'is-invalid': erros?.[`${prefixo}.pix`]}" maxlength="50">
         <div v-if="erros?.[`${prefixo}.pix`]" class="invalid-feedback">
             {{ erros[`${prefixo}.pix`] }}
          </div>
       </div>
       <div class="col-md-3">
         <label class="form-label">Banco</label>
-        <input type="text" v-model="modelValue.banco" class="form-control custom-input"  :class="{'is-invalid': erros?.[`${prefixo}.banco`]}" >
-        <div v-if="erros?.[`${prefixo}.banco`]" class="invalid-feedback">
+        <input type="text" v-model="modelValue.banco" class="form-control custom-input"  :class="{'is-invalid': erros?.[`${prefixo}.banco`]}"maxlength="20">
+        <div v-if="erros?.[`${prefixo}.banco`]" class="invalid-feedback" >
             {{ erros[`${prefixo}.banco`] }}
          </div>
       </div>
