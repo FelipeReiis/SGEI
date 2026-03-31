@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('eventos', function (Blueprint $table) {
             $table->id();
-            $table->char('nome');
+            $table->string('nome', length:70);
             $table->date('data');
             $table->decimal('valor', total:8, places:2);
             $table->string('imagem', length:255);

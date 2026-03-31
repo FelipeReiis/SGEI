@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('mensalidades', function (Blueprint $table) {
             $table->id();
-            $table->char('mes', length:2);
-            $table->char('ano', length:4);
+            $table->string('mes', length:2);
+            $table->string('ano', length:4);
             $table->decimal('valor', total:8, places:2);
             $table->date('data_vencimento');
             $table->timestamps();

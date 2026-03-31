@@ -16,8 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('id_aluno');
             $table->foreign('id_aluno')->references('id')->on('alunos')->onDelete('cascade');
             $table->decimal('valor', total:8, places:2);
-            $table->char('forma_pagamento', length:10);
-            $table->char('qtd_parcela', length:10);
+            $table->string('forma_pagamento', length:10);
+            $table->string('qtd_parcela', length:10);
             $table->string('comprovante', length:255);
             $table->date('pago_em');
             $table->unsignedBigInteger('id_evento');

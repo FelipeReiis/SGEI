@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('pessoas', function (Blueprint $table) {
             $table->id();
-            $table->char('nome', length:70);
-            $table->char('email', length:50);
+            $table->string('nome', length:70);
+            $table->string('email', length:50);
             $table->unsignedInteger('id_profissao')->nullable();
             $table->foreign('id_profissao')->references('id')->on('profissaos')->onDelete('cascade');
-            $table->char('telefone', length:15);
-            $table->char('rg', length:12);
-            $table->char('cpf', length:12);
+            $table->string('telefone', length:15);
+            $table->string('rg', length:12);
+            $table->string('cpf', length:12);
             $table->date('data_nascimento');
             $table->unsignedBigInteger('id_end');
             $table->foreign('id_end')->references('id')->on('enderecos')->onDelete('cascade');
