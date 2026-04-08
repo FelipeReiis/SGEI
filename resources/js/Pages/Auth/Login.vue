@@ -30,7 +30,7 @@ const submit = () => {
         <div class="login-card shadow-lg">
 
             <div class="text-center mb-5">
-                <h1 class="logo-text">Sistema</h1>
+                <h1 class="logo-text">SGEI</h1>
                 <p class="text-muted small">Faça login para acessar sua conta</p>
             </div>
 

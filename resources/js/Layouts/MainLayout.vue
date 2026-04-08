@@ -14,7 +14,7 @@
     <div class="layout-grid" :class="{ 'menu-closed': !isSidebarOpen }">
         <aside class="area-sidebar">
         <div class="logo-area">
-            <h1 v-show="isSidebarOpen">Sistema</h1>
+            <h1 v-show="isSidebarOpen">SGEI</h1>
             <button class="toggle-btn" @click="isSidebarOpen = !isSidebarOpen">
             <span v-if="isSidebarOpen">«</span>
             <span v-else>»</span>
