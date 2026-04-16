@@ -45,12 +45,13 @@ class EnderecoService
             DB::commit();
             return $idEnderecos;
         }else{
+            $tipo = array_keys($req->all())[0];
             $endereco = endereco::create([
-                'complemento' => trim($req->complemento),
-                'cep' => trim($limpar($req->cep)),
-                'numero' =>trim($req->numero),
-                'logradouro' =>trim($req->logradouro),
-                'bairro' =>trim($req->bairro),
+                'complemento' => trim($req->all()[$tipo]['complemento']),
+                'cep' => trim($limpar($req->all()[$tipo]['cep'])),
+                'numero' =>trim($req->all()[$tipo]['numero']),
+                'logradouro' =>trim($req->all()[$tipo]['logradouro']),
+                'bairro' =>trim($req->all()[$tipo]['bairro']),
             ]);
             DB::commit();
             return $endereco->id;
@@ -103,13 +104,13 @@ class EnderecoService
 
             $id_end = pessoa::select('id_end')->where('id', $id)->first();
             $endereco = endereco::find($id_end->id_end);
-
+            $tipo = array_keys($req->all())[0];
             $endereco->update([
-                'complemento' => trim($req->complemento),
-                'cep' => trim($limpar($req->cep)),
-                'numero' => trim($req->numero),
-                'bairro' => trim($req->bairro),
-                'logradouro' => trim($req->logradouro)
+                'complemento' => trim($req->all()[$tipo]['complemento']),
+                'cep' => trim($limpar($req->all()[$tipo]['cep'])),
+                'numero' => trim($req->all()[$tipo]['numero']),
+                'bairro' => trim($req->all()[$tipo]['bairro']),
+                'logradouro' => trim($req->all()[$tipo]['logradouro'])
             ]);
 
             DB::commit();

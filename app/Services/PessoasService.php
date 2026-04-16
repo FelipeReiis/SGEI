@@ -48,14 +48,15 @@ class PessoasService
                 DB::commit();
                 return $pessoasId;
             }else{
+                $tipo = array_keys($req->all())[0];
                 $pessoa = pessoa::create([
-                    'nome' => trim($req->nome),
-                    'email' => trim($req->email),
-                    'telefone' => trim($limpar($req->telefone)),
-                    'rg' => trim($limpar($req->rg)),
-                    'cpf' => trim($limpar($req->cpf)),
-                    'data_nascimento' => trim($req->data_nascimento),
-                    'funcionario' => trim($req->funcionario ?? 0 ) ,
+                    'nome' => trim($req->all()[$tipo]['nome']),
+                    'email' => trim($req->all()[$tipo]['email']),
+                    'telefone' => trim($limpar($req->all()[$tipo]['telefone'])),
+                    'rg' => trim($limpar($req->all()[$tipo]['rg'])),
+                    'cpf' => $limpar($req->all()[$tipo]['cpf']),
+                    'data_nascimento' => trim($req->all()[$tipo]['data_nascimento']),
+                    'funcionario' => trim($req->all()[$tipo]['funcionario'] ?? 0),
                     'id_end' => $enderecoId
                 ]);
                 DB::commit();
@@ -109,15 +110,15 @@ class PessoasService
                 return $msg;
             }
             $pessoa = pessoa::find($id);
-
+            $tipo = array_keys($req->all())[0];
             $pessoa->update([
-                    'nome' => trim($req->nome),
-                    'email' => trim($req->email),
-                    'telefone' => trim($limpar($req->telefone)),
-                    'rg' => trim($limpar($req->rg)),
-                    'cpf' => $limpar($req->cpf),
-                    'data_nascimento' => trim($req->data_nascimento),
-                    'funcionario' => trim($req->funcionario ?? 0),
+                    'nome' => trim($req->all()[$tipo]['nome']),
+                    'email' => trim($req->all()[$tipo]['email']),
+                    'telefone' => trim($limpar($req->all()[$tipo]['telefone'])),
+                    'rg' => trim($limpar($req->all()[$tipo]['rg'])),
+                    'cpf' => $limpar($req->all()[$tipo]['cpf']),
+                    'data_nascimento' => trim($req->all()[$tipo]['data_nascimento']),
+                    'funcionario' => trim($req->all()[$tipo]['funcionario'] ?? 0),
                 ]);
 
             DB::commit();

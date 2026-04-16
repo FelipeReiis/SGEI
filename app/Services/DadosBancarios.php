@@ -25,13 +25,13 @@ class DadosBancarios{
                 DB::commit();
                 return true;
             }
-
+            $tipo = array_keys($req->all())[0];
             DadoBancario::create([
                 'id_pessoa' => $pessoasId,
-                'agencia' => $req->agencia,
-                'conta' => $req->conta,
-                'banco' => $req->banco,
-                'pix' => $req->pix,
+                'agencia' => $req->all()[$tipo]['agencia'],
+                'conta' => $req->all()[$tipo]['conta'],
+                'banco' => $req->all()[$tipo]['banco'],
+                'pix' => $req->all()[$tipo]['pix'],
             ]);
 
                 DB::commit();
@@ -47,13 +47,13 @@ class DadosBancarios{
     public function update($req){
         DB::beginTransaction();
         try{
-            $dadoBancario = DadoBancario::where('id_pessoa', $req->financeiro['id'])->first();
-
+            $tipo = array_keys($req->all())[0];
+            $dadoBancario = DadoBancario::where('id_pessoa', $req->all()[$tipo]['id'])->first();
             $dadoBancario->update([
-                'agencia' => $req->bancario['agencia'],
-                'conta' => $req->bancario['conta'],
-                'banco' => $req->bancario['banco'],
-                'pix' => $req->bancario['pix'],
+                'agencia' => $req->all()[$tipo]['agencia'],
+                'conta' => $req->all()[$tipo]['conta'],
+                'banco' => $req->all()[$tipo]['banco'],
+                'pix' => $req->all()[$tipo]['pix'],
             ]);
 
             DB::commit();
