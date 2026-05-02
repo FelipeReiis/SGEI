@@ -49,55 +49,65 @@
     <hr class="mb-4">
 
     <div class="row g-3" v-if="mostrarPessoa">
-      <div class="col-md-4">
-        <label class="form-label">Nome Completo*</label>
-        <input type="text" v-model="modelValue.nome" class="form-control custom-input" :class="{'is-invalid': erros?.[`${prefixo}.nome`]}" >
-        <div v-if="erros?.[`${prefixo}.nome`]" class="invalid-feedback">
-            {{ erros[`${prefixo}.nome`] }}
-         </div>
-      </div>
-      <div class="col-md-4" v-if="!mostrarEndereco"> <slot name="extra-field"></slot>
-      </div>
+        <div class="col-md-4">
+            <label class="form-label">Nome Completo*</label>
+            <input type="text" v-model="modelValue.nome" class="form-control custom-input" :class="{'is-invalid': erros?.[`${prefixo}.nome`]}" >
+            <div v-if="erros?.[`${prefixo}.nome`]" class="invalid-feedback">
+                {{ erros[`${prefixo}.nome`] }}
+            </div>
+        </div>
 
-      <div class="col-md-4">
-        <label class="form-label">E-mail</label>
-        <input type="email" v-model="modelValue.email" class="form-control custom-input"  :class="{'is-invalid': erros?.[`${prefixo}.email`]}" maxlength="50">
-        <div v-if="erros?.[`${prefixo}.email`]" class="invalid-feedback">
-            {{ erros[`${prefixo}.email`] }}
-         </div>
-      </div>
+        <div class="col-md-4">
+            <label class="form-label">E-mail</label>
+            <input type="email" v-model="modelValue.email" class="form-control custom-input"  :class="{'is-invalid': erros?.[`${prefixo}.email`]}" maxlength="50">
+            <div v-if="erros?.[`${prefixo}.email`]" class="invalid-feedback">
+                {{ erros[`${prefixo}.email`] }}
+            </div>
+        </div>
 
-      <div class="col-md-4">
-        <label class="form-label">Telefone</label>
-        <input type="text" @input="modelValue.telefone = maskTelefone($event.target.value)" class="form-control custom-input" :class="{'is-invalid': erros?.[`${prefixo}.telefone`]}" >
-        <div v-if="erros?.[`${prefixo}.telefone`]" class="invalid-feedback">
-            {{ erros[`${prefixo}.telefone`] }}
-         </div>
-      </div>
+        <div class="col-md-4">
+            <label class="form-label">Telefone</label>
+            <input
+                type="text"
+                :value="modelValue.telefone"
+                @input="modelValue.telefone = maskTelefone($event.target.value)"
+                class="form-control custom-input"
+                :class="{'is-invalid': erros?.[`${prefixo}.telefone`]}"
+            >
+            <div v-if="erros?.[`${prefixo}.telefone`]" class="invalid-feedback">
+                {{ erros[`${prefixo}.telefone`] }}
+            </div>
+        </div>
 
-      <div class="col-md-4">
-        <label class="form-label">RG*</label>
-        <input type="text"  @input="modelValue.rg = maskRG($event.target.value)" class="form-control custom-input" :class="{'is-invalid': erros?.[`${prefixo}.rg`]}" maxlength="12" :value="modelValue.rg">
-        <div v-if="erros?.[`${prefixo}.rg`]" class="invalid-feedback">
-            {{ erros[`${prefixo}.rg`] }}
-         </div>
-      </div>
+        <div class="col-md-4">
+            <label class="form-label">RG*</label>
+            <input type="text"  @input="modelValue.rg = maskRG($event.target.value)" class="form-control custom-input" :class="{'is-invalid': erros?.[`${prefixo}.rg`]}" maxlength="12" :value="modelValue.rg">
+            <div v-if="erros?.[`${prefixo}.rg`]" class="invalid-feedback">
+                {{ erros[`${prefixo}.rg`] }}
+            </div>
+        </div>
 
-      <div class="col-md-4">
-        <label class="form-label">CPF*</label>
-        <input type="text" @input="modelValue.cpf = maskCPF($event.target.value)" class="form-control custom-input" :value="modelValue.cpf"  maxlength="14"  :class="{'is-invalid': erros?.[`${prefixo}.cpf`]}" >
-        <div v-if="erros?.[`${prefixo}.cpf`]" class="invalid-feedback">
-            {{ erros[`${prefixo}.cpf`] }}
-         </div>
-      </div>
+        <div class="col-md-4">
+            <label class="form-label">CPF*</label>
+            <input type="text" @input="modelValue.cpf = maskCPF($event.target.value)" class="form-control custom-input" :value="modelValue.cpf"  maxlength="14"  :class="{'is-invalid': erros?.[`${prefixo}.cpf`]}" >
+            <div v-if="erros?.[`${prefixo}.cpf`]" class="invalid-feedback">
+                {{ erros[`${prefixo}.cpf`] }}
+            </div>
+        </div>
 
-      <div class="col-md-4">
-        <label class="form-label">Data de Nascimento*</label>
-        <input type="date" v-model="modelValue.data_nascimento" class="form-control custom-input"  :class="{'is-invalid': erros?.[`${prefixo}.data_nascimento`]}" >
-        <div v-if="erros?.[`${prefixo}.data_nascimento`]" class="invalid-feedback">
-            {{ erros[`${prefixo}.data_nascimento`] }}
-         </div>
-      </div>
+        <div class="col-md-4">
+            <label class="form-label">Data de Nascimento*</label>
+            <input type="date" v-model="modelValue.data_nascimento" class="form-control custom-input"  :class="{'is-invalid': erros?.[`${prefixo}.data_nascimento`]}" >
+            <div v-if="erros?.[`${prefixo}.data_nascimento`]" class="invalid-feedback">
+                {{ erros[`${prefixo}.data_nascimento`] }}
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mt-2" v-if="mostrarPessoa">
+            <div class="col-md-12">
+                <slot name="extra-field"></slot>
+            </div>
     </div>
 
     <div v-if="mostrarEndereco" class="row g-3 mt-2">

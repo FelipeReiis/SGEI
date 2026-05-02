@@ -6,5 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Professor extends Model
 {
-    //
+
+    protected $fillable = [
+        'id_especialidade',
+        'id_pessoa'
+    ];
 }

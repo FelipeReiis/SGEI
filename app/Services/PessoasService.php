@@ -56,7 +56,8 @@ class PessoasService
                     'rg' => trim($limpar($req->all()[$tipo]['rg'])),
                     'cpf' => $limpar($req->all()[$tipo]['cpf']),
                     'data_nascimento' => trim($req->all()[$tipo]['data_nascimento']),
-                    'funcionario' => trim($req->all()[$tipo]['funcionario'] ?? 0),
+                    'funcionario' => trim(isset($req->all()[$tipo]['tipo_servico']) ? 1 : 0),
+                    'id_profissao' => $req->all()[$tipo]['tipo_servico'] ?? null,
                     'id_end' => $enderecoId
                 ]);
                 DB::commit();
@@ -118,7 +119,8 @@ class PessoasService
                     'rg' => trim($limpar($req->all()[$tipo]['rg'])),
                     'cpf' => $limpar($req->all()[$tipo]['cpf']),
                     'data_nascimento' => trim($req->all()[$tipo]['data_nascimento']),
-                    'funcionario' => trim($req->all()[$tipo]['funcionario'] ?? 0),
+                    'funcionario' => trim(isset($req->all()[$tipo]['tipo_servico']) ? 1 : 0),
+                    'id_profissao' => $req->all()[$tipo]['tipo_servico'] ?? null,
                 ]);
 
             DB::commit();

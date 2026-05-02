@@ -20,7 +20,8 @@ const menuItems = [
     icon: '📂',
     children: [
       { label: 'Alunos', route: '/alunos' },
-    //   { label: 'Fornecedores', route: '/fornecedores' },
+      { label: 'Funcionários', route: '/funcionarios' },
+      { label: 'Turmas', route: '/turmas' },
     //   { label: 'Produtos', route: '/produtos' }
     ]
   },

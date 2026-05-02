@@ -3,11 +3,13 @@
 namespace App\Services;
 
 use App\Models\pessoa;
+use App\Models\Professor;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class FuncionarioService{
+class FuncionarioService
+{
 
     private $enderecoService;
     private $pessoasService;
@@ -17,14 +19,57 @@ class FuncionarioService{
         $this->pessoasService = $pessoasService;
     }
 
-    public function index(Request $req){
+    public function index(Request $req)
+    {
         $funcionarios = pessoa::select('nome', 'cpf', 'id')->where('funcionario', 1);
 
-        if($req->busca){
-            $funcionarios->where('nome', 'like', '%'.$req->busca.'%');
+        if ($req->busca) {
+            $funcionarios->where('nome', 'like', '%' . $req->busca . '%');
         }
 
         return $funcionarios;
+    }
+
+    public function edit($id)
+    {
+        try {
+            $funcionario = Pessoa::with(['endereco', 'bancario', 'professor'])->find($id);
+            $especialidadesIds = $funcionario->professor ? $funcionario->professor->pluck('id_especialidade')->toArray() : [];
+            return [$funcionario, $especialidadesIds];
+        } catch (Exception $e) {
+            return "houve um erro ao buscar o funcionario: $e";
+        }
+    }
+
+    public function createProfessor($idPessoa, $idEspecialidade){
+        try{
+            foreach($idEspecialidade as $espec){
+                Professor::create([
+                    'id_pessoa' => $idPessoa,
+                    'id_especialidade' => $espec
+                ]);
+            }
+        }catch(Exception $e){
+            return 'Houve um erro ao criar o Professor.';
+        }
+    }
+
+    public function updateProfessor($idPessoa, $idEspecialidade){
+        try{
+
+                $delete = Professor::where('id_pessoa', $idPessoa)->delete();
+                if($delete){
+                    foreach($idEspecialidade as $espec){
+                        Professor::create([
+                            'id_pessoa' => $idPessoa,
+                            'id_especialidade' => $espec
+                        ]);
+                    }
+                }
+
+        }catch(Exception $e){
+            return 'Houve um erro ao atualizar as especialidades: '.$e;
+        }
     }
 
 

@@ -14,6 +14,19 @@ class pessoa extends Model
         'cpf',
         'data_nascimento',
         'funcionario',
-        'id_end'
+        'id_end',
+        'id_profissao'
     ];
+
+    public function endereco() {
+        return $this->belongsTo(endereco::class, 'id_end');
+    }
+
+    public function bancario() {
+        return $this->hasOne(DadoBancario::class, 'id_pessoa');
+    }
+
+    public function professor(){
+        return $this->hasMany(Professor::class, 'id_pessoa');
+    }
 }

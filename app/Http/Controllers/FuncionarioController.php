@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePessoaRequest;
+use App\Models\Curso;
+use App\Models\pessoa;
+use App\Models\profissao;
 use App\Services\DadosBancarios;
 use App\Services\EnderecoService;
 use App\Services\FuncionarioService;
@@ -17,56 +20,78 @@ class FuncionarioController extends Controller
     private $enderecoService;
     private $dadosBancario;
     private $funcionarioService;
-    public function __construct(PessoasService $pessoaService, EnderecoService $enderecoService, DadosBancarios $dadosBancario, FuncionarioService $funcionarioService){
+    public function __construct(PessoasService $pessoaService, EnderecoService $enderecoService, DadosBancarios $dadosBancario, FuncionarioService $funcionarioService)
+    {
         $this->pessoaService = $pessoaService;
         $this->enderecoService = $enderecoService;
-        $this->dadosBancario= $dadosBancario;
+        $this->dadosBancario = $dadosBancario;
         $this->funcionarioService = $funcionarioService;
     }
 
-    public function index(Request $req){
+    public function index(Request $req)
+    {
         $funcionarios = $this->funcionarioService->index($req);
-        return Inertia::render('Funcionarios/index',[
+        return Inertia::render('Funcionarios/index', [
             'funcionarios' => $funcionarios->paginate(10)->withQueryString(),
             'busca' => $req->only(['busca'])
         ]);
     }
 
-    public function create(){
-        return Inertia::render('Funcionarios/create_edit');
+    public function create()
+    {
+        $profissoes = profissao::select('id', 'descricao')->get();
+        $especialidades = Curso::select('id', 'nome')->get();
+        return Inertia::render('Funcionarios/create_edit', [
+            'profissoes' => $profissoes,
+            'especialidades' => $especialidades
+        ]);
     }
 
-     public function store(StorePessoaRequest $req){
-        try{
+    public function store(StorePessoaRequest $req)
+    {
+        try {
 
             $req->validated();
             $endId = $this->enderecoService->store($req);
             $pessoaId = $this->pessoaService->store($req, $endId);
             $this->dadosBancario->store($req, $pessoaId);
+            if(count($req->funcionario['especialidades']) > 0)
+                $this->funcionarioService->createProfessor($pessoaId, $req->funcionario['especialidades']);
             $msg = "Funcionário cadastrado com sucesso!!";
             return redirect()->route('funcionarios.index')->with('sucesso', $msg);
-        }catch(Exception $e){
+        } catch (Exception $e) {
             dd('erro: ', $e);
-            $msg = 'Houve um erro ao tentar cadastrar um funcionário '. $e;
+            $msg = 'Houve um erro ao tentar cadastrar um funcionário ' . $e;
             return $msg;
         }
     }
 
-    public function edit($id){
-        $pessoa = $this->pessoaService->edit($id);
-        return $pessoa;
+    public function edit($id)
+    {
+        $funcionario = $this->funcionarioService->edit($id);
+        $profissoes = profissao::all();
+        $especialidades = Curso::select('id', 'nome')->get();
+
+        return Inertia::render('Funcionarios/create_edit', [
+            'funcionario' => $funcionario[0],
+            'especialidades_salvas' => $funcionario[1],
+            'especialidades' => $especialidades,
+            'profissoes' => $profissoes
+        ]);
     }
 
-    public function update(StorePessoaRequest $req, $id){
-        try{
+    public function update(StorePessoaRequest $req, $id)
+    {
+        try {
             $req->validated();
-            $funEnd = $this->enderecoService->update($req,$id);
+            $funEnd = $this->enderecoService->update($req, $id);
             $this->dadosBancario->update($req);
             $msg = $this->pessoaService->update($req, $id);
-            dd('aoba');
-        }catch(Exception $e){
-            dd('erro: '. $e);
+            if(count($req->funcionario['especialidades']) > 0)
+                $this->funcionarioService->updateProfessor($id, $req->funcionario['especialidades']);
+            return redirect()->route('funcionarios.index')->with('sucesso', $msg);
+        } catch (Exception $e) {
+            dd('erro: ' . $e);
         }
     }
-
 }
