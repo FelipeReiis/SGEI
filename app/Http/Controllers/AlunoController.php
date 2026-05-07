@@ -46,7 +46,6 @@ class AlunoController extends Controller
             return redirect()->route('alunos.index')->with('sucesso', 'Aluno cadastrado com sucesso!');
 
         }catch(Exception $e){
-            dd($e);
             return redirect()->route('alunos.index')->with('erro', 'houve um erro ao tentar cadastrar: '.$e );
         }
 
@@ -62,7 +61,6 @@ class AlunoController extends Controller
 
     public function update(StorePessoaRequest $req, $id){
         try{
-
             $req->validated();
             $alunoEnd = $this->enderecoService->update($req,$id);
             $alunoMsg = $this->pessoaService->update($req, $id);

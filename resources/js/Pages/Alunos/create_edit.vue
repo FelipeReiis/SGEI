@@ -21,6 +21,7 @@
             bairro: props.aluno?.aluno_bairro ?? '',
             complemento: props.aluno?.aluno_complemento ?? '',
             numero: props.aluno?.aluno_numero ?? '',
+            escola: props?.aluno?.aluno_escola ?? ''
         },
 
         pedagogico: props.aluno?.pedagogico ?? { nome: props.aluno?.pedag_nome ?? '', cpf:  props.aluno?.pedag_cpf ?? '', email:  props.aluno?.pedag_email ?? '', telefone: props.aluno?.pedag_telefone ?? '', rg:  props.aluno?.pedag_rg ?? '', data_nascimento:  props.aluno?.pedag_data_nascimento ?? '', cep: props.aluno?.pedag_cep ?? '', logradouro:  props.aluno?.pedag_logradouro ?? '', bairro: props.aluno?.pedag_bairro ?? '', complemento:  props.aluno?.pedag_complemento ?? '', id:props.aluno?.pedag_id ?? '', numero:props.aluno?.pedag_numero ?? ''},
@@ -62,6 +63,18 @@
         :erros="formulario.errors"
         prefixo="aluno"
       >
+        <template #extra-field>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Escola Fundamental*</label>
+                    <input type="text" v-model="formulario.aluno.escola" class="form-control custom-input" :class="{'is-invalid': formulario.errors?.['aluno.escola']}" >
+                    <div v-if="formulario.errors?.['aluno.escola']" class="invalid-feedback">
+                        {{ formulario.errors['aluno.escola'] }}
+                    </div>
+                </div>
+            </div>
+        </template>
+
       </FormSecaoPessoa>
 
       <div class="accordion mt-4" id="accordionResponsaveis">

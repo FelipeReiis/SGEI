@@ -38,7 +38,7 @@ class AlunoService
                 'id_resp_fin' => isset($idPessoaAluno[2]['financeiro']) ? $idPessoaAluno[2]['financeiro'] : $idPessoaAluno[1]['pedagogico'],
                 'id_resp_pedag' => isset($idPessoaAluno[1]['pedagogico']) ? $idPessoaAluno[1]['pedagogico'] : $idPessoaAluno[1]['financeiro'],
                 'id_pessoa' => $idPessoaAluno[0]['aluno'],
-                'id_turma' => null
+                'id_turma' => null,
             ]);
             DB::commit();
             $msg = 'Aluno registrado com sucesso!';
@@ -75,6 +75,7 @@ class AlunoService
                                 'aluno_end.complemento as aluno_complemento',
                                 'aluno_end.bairro as aluno_bairro',
                                 'aluno_end.numero as aluno_numero',
+                                'alunos.escola as aluno_escola',
                                 'pedag_pessoa.id as pedag_id',
                                 'pedag_pessoa.nome as pedag_nome',
                                 'pedag_pessoa.email as pedag_email',
@@ -114,7 +115,7 @@ class AlunoService
     }
 
     public function update(Request $req, $id){
-
+        dd($req);
       DB::beginTransaction();
 
         try{

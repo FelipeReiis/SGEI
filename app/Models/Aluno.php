@@ -11,6 +11,7 @@ class Aluno extends Model
         'id_resp_fin',
         'id_resp_pedag',
         'id_pessoa',
-        'id_turma'
+        'id_turma',
+        'escola'
     ];
 }
