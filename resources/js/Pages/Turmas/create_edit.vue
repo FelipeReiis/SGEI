@@ -10,7 +10,18 @@
         professores: Array,
         cursos: Array,
         niveis: Array,
-        alunos: Array
+        alunos: Array,
+        dias: {
+            type: Array,
+            default: () => ([
+                { id: 'segunda', nome: 'Segunda-Feira' },
+                { id: 'terca', nome: 'Terça-Feira' },
+                { id: 'quarta', nome: 'Quarta-Feira' },
+                { id: 'quinta', nome: 'Quinta-Feira' },
+                { id: 'sexta', nome: 'Sexta-Feira' },
+                { id: 'sabado', nome: 'Sábado' },
+            ])
+        }
     });
 
     const formulario = useForm({
@@ -21,6 +32,7 @@
         horario: props.turma?.horario ?? '',
         nivel_id: props.turma?.id_nivel ?? '',
         alunos_ids: [],
+        dias_aulas: props.turma?.dias ?? []
     });
 
     const maskHorario = (v) => {
@@ -107,7 +119,7 @@
             const matriculados = props.alunos
                 .filter(aluno => Number(aluno.id_turma) === Number(props.turma.id))
                 .map(aluno => aluno.aluno_id);
-
+            console.log(props.alunos, props.turma.id);
             formulario.alunos_ids = matriculados;
         }
     });
@@ -185,6 +197,27 @@
                         >
                         <div v-if="formulario.errors['horario']" class="invalid-feedback">
                             {{ formulario.errors['horario'] }}
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Dias de Aulas*</label>
+
+                        <div class="d-flex flex-wrap gap-3 p-3 border rounded bg-light">
+                            <div v-for="dia in dias" :key="dia.id" class="form-check">
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    :id="dia.id"
+                                    :value="dia.id"
+                                    v-model="formulario.dias_aulas"
+                                >
+                                <label class="form-check-label">{{ dia.nome }}</label>
+                            </div>
+                        </div>
+
+                        <div v-if="formulario.errors['dias_aulas']" class="text-danger small mt-1">
+                            {{ formulario.errors['dias_aulas'] }}
                         </div>
                     </div>
 

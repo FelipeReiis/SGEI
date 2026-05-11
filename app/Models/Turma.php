@@ -10,9 +10,12 @@ class Turma extends Model
         'grau',
         'horario',
         'id_curso',
-        'id_professor',
-        'id_nivel'
+        'id_nivel',
+        'id_professor'
     ];
 
+    public function professorDias(){
+        return $this->hasMany(ProfessorDias::class, 'id_professor')->whereColumn('id_turma','turmas.id');
+    }
 
 }

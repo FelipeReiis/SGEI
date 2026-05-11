@@ -38,7 +38,6 @@ class AlunoService
                 'id_resp_fin' => isset($idPessoaAluno[2]['financeiro']) ? $idPessoaAluno[2]['financeiro'] : $idPessoaAluno[1]['pedagogico'],
                 'id_resp_pedag' => isset($idPessoaAluno[1]['pedagogico']) ? $idPessoaAluno[1]['pedagogico'] : $idPessoaAluno[1]['financeiro'],
                 'id_pessoa' => $idPessoaAluno[0]['aluno'],
-                'id_turma' => null,
             ]);
             DB::commit();
             $msg = 'Aluno registrado com sucesso!';

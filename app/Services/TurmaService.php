@@ -3,9 +3,11 @@
 namespace App\Services;
 
 use App\Models\Aluno;
+use App\Models\AlunoTurma;
 use App\Models\Curso;
 use App\Models\Nivel;
 use App\Models\Professor;
+use App\Models\ProfessorDias;
 use App\Models\Turma;
 use Exception;
 use Illuminate\Http\Request;
@@ -65,8 +67,21 @@ class TurmaService{
                 'id_curso' =>$req->curso_id,
                 'id_nivel' => $req->nivel_id
             ]);
+
             foreach($req->alunos_ids as $aluno){
-                Aluno::where('id', $aluno)->update(['id_turma' => $turma->id]);
+                AlunoTurma::create(
+                    [
+                        'id_turma' => $turma->id,
+                        'id_aluno' => $aluno
+                    ]
+                );
+            }
+            foreach($req->dias_aulas as $dia){
+                ProfessorDias::create([
+                    'id_professor' => $professor->id,
+                    'dia' => $dia,
+                    'id_turma' => $turma->id
+                ]);
             }
 
             return 'Turma cadastrada com sucesso!!';
@@ -77,10 +92,31 @@ class TurmaService{
     }
 
     public function edit($id){
-        $turma = Turma::select('turmas.id','professors.id_pessoa', 'horario', 'grau', 'id_curso','turmas.id_nivel')
-                        ->join('professors', 'turmas.id_professor', 'professors.id')
-                        ->where('turmas.id', $id)->first();
-
+        $turma = Turma::select(
+        'turmas.id',
+        'professors.id_pessoa',
+        'horario',
+        'grau',
+        'id_curso',
+        'turmas.id_nivel',
+        DB::raw('array_agg(professor_dias.dia) as dias')
+            )
+            ->join('professors', 'turmas.id_professor', 'professors.id')
+            ->join('professor_dias', function ($join) {
+                $join->on('turmas.id', '=', 'professor_dias.id_turma')
+                    ->on('turmas.id_professor', '=', 'professor_dias.id_professor');
+            })
+            ->where('turmas.id', $id)
+            ->groupBy(
+                'turmas.id',
+                'professors.id_pessoa',
+                'horario',
+                'grau',
+                'id_curso',
+                'turmas.id_nivel'
+            )
+            ->first();
+        $turma->dias = explode(',', str_replace(['{', '}'],'', $turma->dias));
         $professores = Professor::join('pessoas', 'professors.id_pessoa', '=', 'pessoas.id')
                                 ->select(
                                     'pessoas.id',
@@ -98,10 +134,10 @@ class TurmaService{
         $niveis = Nivel::all();
 
         $alunos = Aluno::join('pessoas as aluno_pessoa', 'alunos.id_pessoa', 'aluno_pessoa.id')
-                        ->leftjoin('pessoas as pedag_pessoa', 'alunos.id_resp_pedag', 'pedag_pessoa.id')
-                        ->leftjoin('pessoas as fin_pessoa', 'alunos.id_resp_fin', 'fin_pessoa.id')
-                        ->select('aluno_pessoa.nome as aluno_nome', 'pedag_pessoa.nome as pedag_nome', 'aluno_pessoa.id as aluno_id', 'fin_pessoa.nome as fin_nome', 'aluno_pessoa.cpf as aluno_cpf', 'alunos.id_turma')->get();
-        return [$turma,$professores, $cursos, $niveis, $alunos];
+                        ->leftjoin('aluno_turmas', 'alunos.id', 'aluno_turmas.id_aluno')
+                        ->select('aluno_pessoa.nome as aluno_nome', 'aluno_pessoa.id as aluno_id', 'aluno_pessoa.cpf as aluno_cpf', 'aluno_turmas.id_turma')
+                        ->distinct('aluno_id')->get();
+        return [$turma, $professores, $cursos, $niveis, $alunos];
     }
 
     public function update(Request $req){
@@ -117,12 +153,29 @@ class TurmaService{
                 'id_nivel' => $req->nivel_id
             ]);
 
-             foreach($req->alunos_ids as $aluno){
-                Aluno::where('id', $aluno)->update(['id_turma' => $req->id]);
+            AlunoTurma::where('id_turma', $req->id)->whereIn('id_aluno', $req->alunos_ids)->delete();
+
+            foreach($req->alunos_ids as $aluno){
+                AlunoTurma::create(
+                    [
+                        'id_turma' => $req->id,
+                        'id_aluno' => $aluno
+                    ]
+                );
+            }
+
+            ProfessorDias::where('id_professor', $professor->id)->where('id_turma', $req->id)->delete();
+            foreach($req->dias_aulas as $dia){
+                ProfessorDias::create([
+                    'id_professor' => $professor->id,
+                    'dia' => $dia,
+                    'id_turma' => $req->id
+                ]);
             }
 
             return 'Turma atualizada com sucesso!';
         }catch(Exception $e){
+            dd($e);
             return "Houve um problema ao atualizar a turma: $e";
         }
     }

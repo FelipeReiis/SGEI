@@ -55,7 +55,7 @@ class TurmaController extends Controller
                 'cursos' => $cursos,
                 'niveis' => $niveis,
                 'turma' => $turma,
-                'alunos' => $alunos
+                'alunos' => $alunos,
             ]);
         }catch(Exception $e){
             dd($e);
