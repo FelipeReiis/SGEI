@@ -134,9 +134,25 @@ class TurmaService{
         $niveis = Nivel::all();
 
         $alunos = Aluno::join('pessoas as aluno_pessoa', 'alunos.id_pessoa', 'aluno_pessoa.id')
-                        ->leftjoin('aluno_turmas', 'alunos.id', 'aluno_turmas.id_aluno')
-                        ->select('aluno_pessoa.nome as aluno_nome', 'aluno_pessoa.id as aluno_id', 'aluno_pessoa.cpf as aluno_cpf', 'aluno_turmas.id_turma')
-                        ->distinct('aluno_id')->get();
+                        ->leftJoin('aluno_turmas', 'alunos.id', 'aluno_turmas.id_aluno')
+
+                        ->selectRaw("
+                            DISTINCT ON (alunos.id)
+                            aluno_pessoa.nome as aluno_nome,
+                            aluno_pessoa.id as aluno_id,
+                            aluno_pessoa.cpf as aluno_cpf,
+                            aluno_turmas.id_turma
+                        ")
+
+                        ->orderBy('alunos.id')
+
+                        // prioriza a turma desejada
+                        ->orderByRaw("
+                            CASE
+                                WHEN aluno_turmas.id_turma = ? THEN 0
+                                ELSE 1
+                            END
+                        ", [$turma->id])->get();
         return [$turma, $professores, $cursos, $niveis, $alunos];
     }
 
@@ -152,16 +168,16 @@ class TurmaService{
                 'id_curso' =>$req->curso_id,
                 'id_nivel' => $req->nivel_id
             ]);
-
-            AlunoTurma::where('id_turma', $req->id)->whereIn('id_aluno', $req->alunos_ids)->delete();
-
-            foreach($req->alunos_ids as $aluno){
-                AlunoTurma::create(
-                    [
-                        'id_turma' => $req->id,
-                        'id_aluno' => $aluno
-                    ]
-                );
+            AlunoTurma::where('id_turma', $req->id)->delete();
+            if(count($req->alunos_ids) >= 1){
+                foreach($req->alunos_ids as $aluno){
+                    AlunoTurma::create(
+                        [
+                            'id_turma' => $req->id,
+                            'id_aluno' => $aluno
+                        ]
+                    );
+                }
             }
 
             ProfessorDias::where('id_professor', $professor->id)->where('id_turma', $req->id)->delete();
