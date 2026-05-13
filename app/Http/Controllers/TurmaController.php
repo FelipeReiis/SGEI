@@ -67,7 +67,7 @@ class TurmaController extends Controller
             $msg = $this->turmaService->update($req);
             return redirect()->route('turmas.index')->with('sucesso', $msg);
         }catch(Exception $e){
-            return redirect()->route('turmas.index')->with('erro', 'Houve um erro ao atualizar a turma');
+            return redirect()->route('turmas.index')->with('erro', 'Houve um erro ao atualizar a turma: '.$e);
         }
     }
 }

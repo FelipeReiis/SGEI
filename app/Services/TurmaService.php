@@ -51,7 +51,7 @@ class TurmaService{
         $alunos = Aluno::join('pessoas as aluno_pessoa', 'alunos.id_pessoa', 'aluno_pessoa.id')
                         ->leftjoin('pessoas as pedag_pessoa', 'alunos.id_resp_pedag', 'pedag_pessoa.id')
                         ->leftjoin('pessoas as fin_pessoa', 'alunos.id_resp_fin', 'fin_pessoa.id')
-                        ->select('aluno_pessoa.nome as aluno_nome', 'pedag_pessoa.nome as pedag_nome', 'aluno_pessoa.id as aluno_id', 'fin_pessoa.nome as fin_nome', 'aluno_pessoa.cpf as aluno_cpf')->get();
+                        ->select('aluno_pessoa.nome as aluno_nome', 'pedag_pessoa.nome as pedag_nome', 'alunos.id as aluno_id', 'fin_pessoa.nome as fin_nome', 'aluno_pessoa.cpf as aluno_cpf')->get();
 
         return [$professores, $cursos, $niveis, $alunos];
     }
@@ -83,8 +83,8 @@ class TurmaService{
                     'id_turma' => $turma->id
                 ]);
             }
-
-            return 'Turma cadastrada com sucesso!!';
+            $msg = 'Turma cadastrada com sucesso!!';
+            return $msg;
         }catch(Exception $e){
             dd($e);
             return 'Houve um problema ao cadastrar a turma.';
@@ -139,7 +139,7 @@ class TurmaService{
                         ->selectRaw("
                             DISTINCT ON (alunos.id)
                             aluno_pessoa.nome as aluno_nome,
-                            aluno_pessoa.id as aluno_id,
+                            alunos.id as aluno_id,
                             aluno_pessoa.cpf as aluno_cpf,
                             aluno_turmas.id_turma
                         ")
@@ -188,8 +188,8 @@ class TurmaService{
                     'id_turma' => $req->id
                 ]);
             }
-
-            return 'Turma atualizada com sucesso!';
+            $msg = 'Turma atualizada com sucesso!';
+            return $msg;
         }catch(Exception $e){
             dd($e);
             return "Houve um problema ao atualizar a turma: $e";

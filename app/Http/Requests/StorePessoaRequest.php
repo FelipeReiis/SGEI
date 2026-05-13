@@ -4,6 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Rules\CpfValido;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class StorePessoaRequest extends FormRequest
 {
@@ -16,10 +18,15 @@ class StorePessoaRequest extends FormRequest
 
     private function regrasBase(string $p)
     {
-        return [
+        $bancarios = [
+            "$p.banco"=> 'required|max:20',
+            "$p.agencia"=> 'required|max:8',
+            "$p.conta"=> 'required|max:14',
+            "$p.pix"=> 'required|max:50',
+        ];
+        $pessoa = [
             "$p.cpf" => ['required', 'string', 'max:14', new CpfValido],
             "$p.nome" => 'required|string|max:70',
-            "$p.escola" => 'required|string|max:100',
             "$p.email" => 'nullable|email|max:50',
             "$p.telefone" => 'nullable|string|max:15',
             "$p.rg" => 'required|string|max:12',
@@ -27,12 +34,12 @@ class StorePessoaRequest extends FormRequest
             "$p.cep" => 'required|string|max:9',
             "$p.logradouro" => 'required|string|max:100',
             "$p.bairro" => 'required|string|max:70',
-            "$p.complemento" => 'nullable|string|max:70',
-            "$p.banco"=> 'required|max:20',
-            "$p.agencia"=> 'required|max:8',
-            "$p.conta"=> 'required|max:14',
-            "$p.pix"=> 'required|max:50',
+            "$p.complemento" => 'nullable|string|max:70'
         ];
+        if($p === 'aluno')
+            $pessoa[] =   "$p.escola => 'required|string|max:100'";
+        $campos = $p === 'bancario' ? $bancarios : $pessoa;
+        return $campos;
     }
 
     public function rules(): array
@@ -102,7 +109,6 @@ class StorePessoaRequest extends FormRequest
 
             "$p.complemento.string" => "O complemento do $p deve ser um texto válido.",
             "$p.complemento.max" => "O complemento do $p deve ter no máximo 70 caracteres.",
-
             "$p.banco.max" => "O nome do banco deve ter no máximo 20 caracteres",
             "$p.banco.required" => "Preencha o nome do banco, do $p responsável",
             "$p.agencia.required" => "Informe a agência, do $p responsável",
@@ -129,4 +135,13 @@ class StorePessoaRequest extends FormRequest
             return $this->mensagensBase('funcionario');
         }
     }
+
+        protected function failedValidation(Validator $validator)
+        {
+            // Mostra os erros e interrompe
+            dd($validator->errors()->all());
+
+            // Ou mostre os erros com os dados que causaram a falha
+            // dd($validator->errors()->all(), $this->all());
+        }
 }

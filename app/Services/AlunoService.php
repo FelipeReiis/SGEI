@@ -114,7 +114,6 @@ class AlunoService
     }
 
     public function update(Request $req, $id){
-        dd($req);
       DB::beginTransaction();
 
         try{
@@ -122,7 +121,6 @@ class AlunoService
             $aluno->update([
                 'id_resp_fin' => $req->resp_fin,
                 'id_resp_pedag' => $req->resp_pedag,
-                'id_turma' => $req->turma
             ]);
             DB::commit();
             $msg = 'Aluno atualizado com sucesso!';

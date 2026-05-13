@@ -2,8 +2,8 @@
 import { ref, watch } from 'vue';
 import { router } from '@inertiajs/vue3';
 import MainLayout from '@/Layouts/MainLayout.vue';
-import DataTable from '@/Components/DataTable.vue'; // <--- Importamos o componente
-import debounce from 'lodash/debounce'; // npm install lodash
+import DataTable from '@/Components/DataTable.vue';
+import debounce from 'lodash/debounce';
 import { Link } from '@inertiajs/vue3';
 
 const props = defineProps({ alunos: Object, busca: Object });
