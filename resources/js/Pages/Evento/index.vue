@@ -5,6 +5,7 @@
     import DataTable from '@/Components/DataTable.vue';
     import debounce from 'lodash/debounce';
     import { Link } from '@inertiajs/vue3';
+    import Swal from 'sweetalert2';
 
     const props = defineProps({ eventos: Object, busca: Object });
     defineOptions({ layout: MainLayout });
@@ -26,6 +27,41 @@
     const handleSort = (key) => {
         // Aqui você chamaria o backend passando ?sort=key
         console.log("Ordenar por:", key);
+    };
+
+    const confirmarExclusao = (id, nome) => {
+        Swal.fire({
+            title: 'Tem certeza?',
+            text: `Você deseja excluir o evento "${nome}"?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ff0055',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sim, excluir!',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                router.delete(route('eventos.destroy', id), {
+                    onSuccess: () => {
+                        Swal.fire({
+                            title: 'Excluído!',
+                            text: 'O evento foi removido com sucesso.',
+                            icon: 'success',
+                            confirmButtonColor: '#ff0055'
+                        });
+                    },
+                    onError: () => {
+                        Swal.fire({
+                            title: 'Erro!',
+                            text: 'Não foi possível excluir o evento.',
+                            icon: 'error',
+                            confirmButtonColor: '#ff0055'
+                        });
+                    }
+                });
+            }
+        });
     };
 
 </script>
@@ -67,13 +103,13 @@
                     <i class="bi bi-pencil"></i> ✏️
                 </Link>
 
-                <!-- <button
+                <button
                     @click="confirmarExclusao(linha.id, linha.nome)"
                     class="btn btn-sm btn-outline-danger"
                     title="Excluir Aluno"
                 >
                     <i class="bi bi-trash"></i> 🗑️
-                </button> -->
+                </button>
 
             </div>
         </template>
@@ -81,6 +117,12 @@
         <template #valor="{ linha }">
             <span>
                 {{ Number(linha.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
+            </span>
+        </template>
+
+          <template #data="{ linha }">
+            <span>
+                {{new Date(linha.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}}
             </span>
         </template>
 

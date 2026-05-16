@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EventoRequest;
 use App\Models\Evento;
 use App\Services\EventoService;
 use Exception;
@@ -28,7 +29,7 @@ class EventoController extends Controller
         return Inertia::render('Evento/create_edit');
     }
 
-    public function store(Request $req){
+    public function store(EventoRequest $req){
         try{
             $msg = $this->eventoService->store($req);
 
@@ -50,7 +51,7 @@ class EventoController extends Controller
         }
     }
 
-    public function update(Request $req, $id){
+    public function update(EventoRequest $req, $id){
         try{
             $msg = $this->eventoService->update($req, $id);
 
@@ -61,7 +62,7 @@ class EventoController extends Controller
         }
     }
 
-    public function delete($id){
+    public function destroy($id){
         $msg = $this->eventoService->delete($id);
         return redirect()->route('eventos.index')->with('sucesso', $msg);
 

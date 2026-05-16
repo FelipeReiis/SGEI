@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('eventos', function (Blueprint $table) {
             $table->id();
             $table->string('nome', length:70);
-            $table->date('data');
+            $table->date('data')->nullable();
             $table->decimal('valor', total:8, places:2);
-            $table->string('imagem', length:255);
-            $table->text('observacao');
+            $table->string('imagem', length:255)->nullable();
+            $table->text('observacao')->nullable();
         });
     }
 

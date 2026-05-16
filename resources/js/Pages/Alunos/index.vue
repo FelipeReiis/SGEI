@@ -75,13 +75,13 @@ const handleSort = (key) => {
                     <i class="bi bi-pencil"></i> ✏️
                 </Link>
 
-                <!-- <button
+                <button
                     @click="confirmarExclusao(linha.id, linha.nome)"
                     class="btn btn-sm btn-outline-danger"
                     title="Excluir Aluno"
                 >
                     <i class="bi bi-trash"></i> 🗑️
-                </button> -->
+                </button>
 
             </div>
         </template>

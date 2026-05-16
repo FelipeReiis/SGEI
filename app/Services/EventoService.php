@@ -16,11 +16,13 @@ use Illuminate\Support\Facades\Storage;
             DB::beginTransaction();
             if($req->hasFile('img')){
                 $arquivo = $req->file('img');
-                $nomeNovo = "$req->nome-".Carbon::now()->format('Y-m-d').$arquivo->getClientOriginalName();
+                $nomeNovo = str_replace(' ', '-',$req->evento).'-'.Carbon::now()->format('Y-m-d').$arquivo->getClientOriginalName();
                 $caminho = $req->file('img')->storeAs('eventos_imgs', $nomeNovo, 'public');
             }
 
-          $req->preco =  (float)str_replace(['R$ ', ','],['', '.'],$req->preco);
+            $precoLimpo = str_replace(['R$ ', '.'], '', $req->preco);
+            $req->preco = (float) str_replace(',', '.', $precoLimpo);
+            
             Evento::create([
                 'nome' => $req->evento,
                 'valor' => $req->preco,
@@ -41,6 +43,7 @@ use Illuminate\Support\Facades\Storage;
     public function edit($id){
         try{
             $evento = Evento::find($id);
+            $evento->imagem = $evento->imagem ? Storage::url($evento->imagem) : null;
             return $evento;
         }catch(Exception $e){
             return "Houve um problema ao resgatar os dados do evento: $e";
@@ -51,28 +54,29 @@ use Illuminate\Support\Facades\Storage;
     {
         try {
             DB::beginTransaction();
-
             $evento = Evento::findOrFail($id);
 
             // Mantém a imagem antiga por padrão
             $caminho = $evento->imagem;
 
             // Se enviou nova imagem
-            if ($req->hasFile('imagem')) {
+            if ($req->hasFile('img')) {
 
 
                 if ($evento->imagem && Storage::disk('public')->exists($evento->imagem)) {
                     Storage::disk('public')->delete($evento->imagem);
                 }
 
-                $arquivo = $req->file('imagem');
+                $arquivo = $req->file('img');
 
-                $nomeNovo = $req->nome . '-' . now()->timestamp . '.' . $arquivo->getClientOriginalExtension();
+                $nomeNovo = str_replace(' ', '-',$req->evento).'-'.now()->timestamp . '.' . $arquivo->getClientOriginalExtension();
 
                 $caminho = $arquivo->storeAs('eventos_imgs', $nomeNovo, 'public');
             }
 
-            $req->preco =  (float)str_replace(['R$ ', ','],['', '.'],$req->preco);
+            $precoLimpo = str_replace(['R$ ', '.'], '', $req->preco);
+            $req->preco = (float) str_replace(',', '.', $precoLimpo);
+
             $evento->update([
                 'nome' => $req->evento,
                 'valor' => $req->preco,

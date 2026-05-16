@@ -8,15 +8,6 @@
         evento: Object,
     });
 
-    const formulario = useForm({
-        id: props.evento?.id ?? '',
-        evento: props.evento?.nome ?? '',
-        data_evento: props.evento?.data ?? '',
-        preco: props.evento?.valor ?? '',
-        ativo: props.evento?.status ?? '',
-        img: null, // Para upload de arquivo, iniciamos como null
-        obs: props.evento?.observacao ?? '',
-    });
 
     // Máscara Monetária em tempo real (R$ 1.234,56)
     const maskDinheiro = (v) => {
@@ -27,7 +18,17 @@
         return "R$ " + v;
     };
 
-    // Captura o arquivo de imagem selecionado
+    const formulario = useForm({
+        id: props.evento?.id ?? '',
+        evento: props.evento?.nome ?? '',
+        data_evento: props.evento?.data ?? '',
+        preco: props.evento?.valor ? maskDinheiro(props.evento.valor) : '',
+        ativo: props.evento?.status ?? '',
+        img: null, // Para upload de arquivo, iniciamos como null
+        obs: props.evento?.observacao ?? '',
+    });
+
+
     const uploadImagem = (e) => {
         formulario.img = e.target.files[0];
     };
@@ -62,7 +63,8 @@
                             class="form-control custom-input"
                             :class="{'is-invalid' : formulario.errors?.evento}"
                             placeholder="Ex: Workshop de Dança"
-                            required
+                            maxlength="70"
+
                         >
                         <div v-if="formulario.errors?.evento" class="invalid-feedback">
                             {{ formulario.errors.evento }}
@@ -76,11 +78,8 @@
                             v-model="formulario.data_evento"
                             class="form-control custom-input"
                             :class="{'is-invalid' : formulario.errors?.data_evento}"
-                            required
+
                         >
-                        <div v-if="formulario.errors?.data_evento" class="invalid-feedback">
-                            {{ formulario.errors.data_evento }}
-                        </div>
                     </div>
 
                     <div class="col-md-3">
@@ -92,7 +91,7 @@
                             class="form-control custom-input"
                             :class="{'is-invalid' : formulario.errors?.preco}"
                             placeholder="R$ 0,00"
-                            required
+
                         >
                         <div v-if="formulario.errors?.preco" class="invalid-feedback">
                             {{ formulario.errors.preco }}
@@ -105,7 +104,7 @@
                             v-model="formulario.ativo"
                             class="form-select custom-input"
                             :class="{'is-invalid' : formulario.errors?.ativo}"
-                            required
+
                         >
                             <option value="">Selecione o status...</option>
                             <option value="nao_iniciado">Não Iniciado</option>
@@ -128,9 +127,6 @@
                                 accept="image/*"
                             >
                         </div>
-                        <div v-if="formulario.errors?.img" class="text-danger small mt-1">
-                            {{ formulario.errors.img }}
-                        </div>
                         <small v-if="props.evento?.imagem && !formulario.img" class="text-muted d-block mt-1">
                             Imagem atual: <a :href="props.evento.imagem" target="_blank" class="text-pink">Visualizar arquivo</a>
                         </small>
@@ -146,9 +142,6 @@
                             placeholder="Detalhes adicionais sobre o evento..."
                             maxlength="500"
                         ></textarea>
-                        <div v-if="formulario.errors?.obs" class="invalid-feedback">
-                            {{ formulario.errors.obs }}
-                        </div>
                     </div>
 
                 </div>
