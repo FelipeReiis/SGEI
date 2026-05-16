@@ -22,6 +22,7 @@ const menuItems = [
       { label: 'Alunos', route: '/alunos' },
       { label: 'Funcionários', route: '/funcionarios' },
       { label: 'Turmas', route: '/turmas' },
+      { label: 'Eventos', route: '/eventos' },
     //   { label: 'Produtos', route: '/produtos' }
     ]
   },

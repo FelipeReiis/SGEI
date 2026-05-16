@@ -17,6 +17,7 @@ return new class extends Migration
             $table->date('data');
             $table->decimal('valor', total:8, places:2);
             $table->string('imagem', length:255);
+            $table->text('observacao');
         });
     }
 

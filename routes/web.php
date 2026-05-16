@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AlunoController;
+use App\Http\Controllers\EventoController;
 use App\Http\Controllers\FuncionarioController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TurmaController;
@@ -32,6 +33,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('/alunos', AlunoController::class);
     Route::resource('/funcionarios', FuncionarioController::class);
     Route::resource('/turmas', TurmaController::class);
+    Route::resource('/eventos', EventoController::class);
 });
 
 require __DIR__.'/auth.php';

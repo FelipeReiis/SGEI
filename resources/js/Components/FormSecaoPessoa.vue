@@ -81,7 +81,7 @@
 
         <div class="col-md-4">
             <label class="form-label">RG*</label>
-            <input type="text"  @input="modelValue.rg = maskRG($event.target.value)" class="form-control custom-input" :class="{'is-invalid': erros?.[`${prefixo}.rg`]}" maxlength="12" :value="modelValue.rg">
+            <input type="text"  @input="modelValue.rg = maskRG($event.target.value)" class="form-control custom-input" :class="{'is-invalid': erros?.[`${prefixo}.rg`]}" maxlength="13" :value="modelValue.rg">
             <div v-if="erros?.[`${prefixo}.rg`]" class="invalid-feedback">
                 {{ erros[`${prefixo}.rg`] }}
             </div>

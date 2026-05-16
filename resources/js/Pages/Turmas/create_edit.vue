@@ -4,7 +4,7 @@
     import FormSectionLayout from '@/Components/FormSectionLayout.vue'; // O envelope
     import { ref, watch, computed, onMounted } from 'vue';
 
-
+    defineOptions({ layout: MainLayout });
     const props = defineProps({
         turma: Object,
         professores: Array,
@@ -133,9 +133,7 @@
 </script>
 
 <template>
-    <MainLayout>
         <form @submit.prevent="enviar">
-
             <FormSectionLayout titulo="Configuração de Turma">
                 <div class="row g-3">
                     <div class="col-md-6">
@@ -299,5 +297,4 @@
                 </div>
             </FormSectionLayout>
         </form>
-    </MainLayout>
 </template>
