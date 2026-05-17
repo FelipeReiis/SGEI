@@ -16,21 +16,18 @@ return new class extends Migration
             $table->unsignedBigInteger('id_aluno');
             $table->foreign('id_aluno')->references('id')->on('alunos')->onDelete('cascade');
             $table->decimal('valor', total:8, places:2);
-            $table->string('forma_pagamento', length:10);
-            $table->string('qtd_parcela', length:10);
+            $table->string('forma_pagamento', length:10)->nullable();
+            $table->string('qtd_parcela', length:10)->nullable();
             $table->string('comprovante', length:255);
             $table->date('pago_em');
-            $table->unsignedBigInteger('id_evento');
+            $table->unsignedBigInteger('id_evento')->nullable();
             $table->foreign('id_evento')->references('id')->on('eventos')->onDelete('cascade');
-            $table->unsignedBigInteger('id_mensalidade');
+            $table->unsignedBigInteger('id_mensalidade')->nullable();
             $table->foreign('id_mensalidade')->references('id')->on('mensalidades')->onDelete('cascade');
             $table->timestamps();
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
+    
     public function down(): void
     {
         Schema::dropIfExists('pagamentos');

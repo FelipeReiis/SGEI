@@ -6,5 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pagamento extends Model
 {
-    //
+    public $timestamps = false;
+
+    protected $fillable = [
+        'id_aluno',
+        'valor',
+        'pago_em',
+        'id_evento',
+        'comprovante'
+    ];
 }

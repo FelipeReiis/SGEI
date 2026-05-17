@@ -26,15 +26,13 @@ const menuItems = [
     //   { label: 'Produtos', route: '/produtos' }
     ]
   },
-//   {
-//     label: 'Financeiro',
-//     icon: '💲',
-//     children: [
-//       { label: 'Contas a Pagar', route: '/contas-pagar' },
-//       { label: 'Contas a Receber', route: '/contas-receber' }
-//     ]
-//   },
-//   { label: 'Configurações', icon: '⚙️', route: '/config' },
+  {
+    label: 'Inscrições',
+    icon: '📂',
+    children: [
+      { label: 'Eventos', route: '/gerencia' },
+    ]
+  },
 ];
 </script>
 
