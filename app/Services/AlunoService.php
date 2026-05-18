@@ -19,16 +19,22 @@ class AlunoService
     }
 
     public function index(Request $req){
-        $alunos = Aluno::join('pessoas as aluno_pessoa', 'alunos.id_pessoa', 'aluno_pessoa.id')
+
+    try{
+          $alunos = Aluno::join('pessoas as aluno_pessoa', 'alunos.id_pessoa', 'aluno_pessoa.id')
                         ->leftjoin('pessoas as pedag_pessoa', 'alunos.id_resp_pedag', 'pedag_pessoa.id')
                         ->leftjoin('pessoas as fin_pessoa', 'alunos.id_resp_fin', 'fin_pessoa.id')
                         ->select('aluno_pessoa.nome as aluno_nome', 'pedag_pessoa.nome as pedag_nome', 'aluno_pessoa.id as aluno_id', 'fin_pessoa.nome as fin_nome');
 
         if($req->busca){
-            $alunos->where('aluno_pessoa.nome', 'like', '%'.$req->busca.'%');
+            $alunos->where('aluno_pessoa.nome', 'ILIKE', '%'.$req->busca.'%');
         }
 
         return $alunos;
+    }catch(Exception $e){
+        throw new Exception ("Erro ao carregar os alunos: " . $e->getMessage());
+    }
+
     }
 
     public function store($idPessoaAluno){
@@ -43,10 +49,9 @@ class AlunoService
             $msg = 'Aluno registrado com sucesso!';
             return $msg;
         }catch(Exception $e){
-            dd($e);
             DB::rollback();
             $msg = "Erro um tentar registrar: $e";
-            return $msg;
+            throw new Exception ("Erro um tentar registrar o aluno: " . $e->getMessage());
         }
     }
 
@@ -109,7 +114,7 @@ class AlunoService
 
         }catch(Exception $e){
             $msg = "Erro ao consultar os dados: $e";
-            return $msg;
+            throw new Exception ("$msg: " . $e->getMessage());
         }
     }
 
@@ -128,9 +133,8 @@ class AlunoService
         }catch(Exception $e){
 
             DB::rollback();
-            $msg = "Erro um tentar atualizar: $e";
-
-            return $msg;
+            $msg = "Erro um tentar atualizar";
+            throw new Exception ("$msg: " . $e->getMessage());
         }
 
     }

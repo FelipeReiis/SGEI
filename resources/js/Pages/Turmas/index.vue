@@ -20,7 +20,7 @@
     const busca = ref(props.busca || '');
 
     watch(busca, debounce((value) => {
-    router.get('/funcionarios', { busca: value }, { preserveState: true, replace: true });
+    router.get('/turmas', { busca: value }, { preserveState: true, replace: true });
     }, 500));
 
     const handleSort = (key) => {

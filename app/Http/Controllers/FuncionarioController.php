@@ -30,21 +30,31 @@ class FuncionarioController extends Controller
 
     public function index(Request $req)
     {
-        $funcionarios = $this->funcionarioService->index($req);
-        return Inertia::render('Funcionarios/index', [
-            'funcionarios' => $funcionarios->paginate(10)->withQueryString(),
-            'busca' => $req->only(['busca'])
-        ]);
+        try{
+            $funcionarios = $this->funcionarioService->index($req);
+            return Inertia::render('Funcionarios/index', [
+                'funcionarios' => $funcionarios->paginate(10)->withQueryString(),
+                'busca' => $req->only(['busca'])
+            ]);
+
+        }catch(Exception $e){
+            return redirect()->back()->with('erro', $e->getMessage());
+        }
     }
 
     public function create()
     {
-        $profissoes = profissao::select('id', 'descricao')->get();
-        $especialidades = Curso::select('id', 'nome')->get();
-        return Inertia::render('Funcionarios/create_edit', [
-            'profissoes' => $profissoes,
-            'especialidades' => $especialidades
-        ]);
+        try{
+            $profissoes = profissao::select('id', 'descricao')->get();
+            $especialidades = Curso::select('id', 'nome')->get();
+            return Inertia::render('Funcionarios/create_edit', [
+                'profissoes' => $profissoes,
+                'especialidades' => $especialidades
+            ]);
+
+        }catch(Exception $e){
+            return redirect()->back()->with('erro', $e->getMessage());
+        }
     }
 
     public function store(StorePessoaRequest $req)
@@ -60,24 +70,28 @@ class FuncionarioController extends Controller
             $msg = "Funcionário cadastrado com sucesso!!";
             return redirect()->route('funcionarios.index')->with('sucesso', $msg);
         } catch (Exception $e) {
-            dd('erro: ', $e);
-            $msg = 'Houve um erro ao tentar cadastrar um funcionário ' . $e;
-            return $msg;
+            return redirect()->back()->with('erro', $e->getMessage());
         }
     }
 
     public function edit($id)
     {
-        $funcionario = $this->funcionarioService->edit($id);
-        $profissoes = profissao::all();
-        $especialidades = Curso::select('id', 'nome')->get();
+        try{
+            $funcionario = $this->funcionarioService->edit($id);
+            $profissoes = profissao::all();
+            $especialidades = Curso::select('id', 'nome')->get();
 
-        return Inertia::render('Funcionarios/create_edit', [
-            'funcionario' => $funcionario[0],
-            'especialidades_salvas' => $funcionario[1],
-            'especialidades' => $especialidades,
-            'profissoes' => $profissoes
-        ]);
+            return Inertia::render('Funcionarios/create_edit', [
+                'funcionario' => $funcionario[0],
+                'especialidades_salvas' => $funcionario[1],
+                'especialidades' => $especialidades,
+                'profissoes' => $profissoes
+            ]);
+
+        }catch(Exception $e){
+            return redirect()->back()->with('erro', $e->getMessage());
+
+        }
     }
 
     public function update(StorePessoaRequest $req, $id)
@@ -91,7 +105,8 @@ class FuncionarioController extends Controller
                 $this->funcionarioService->updateProfessor($id, $req->funcionario['especialidades']);
             return redirect()->route('funcionarios.index')->with('sucesso', $msg);
         } catch (Exception $e) {
-            dd('erro: ' . $e);
+            return redirect()->back()->with('erro', $e->getMessage());
+
         }
     }
 }

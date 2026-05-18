@@ -7,6 +7,7 @@
     use App\Models\Pagamento;
     use Carbon\Carbon;
     use Exception;
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\DB;
 
     class GerenciaService
@@ -32,16 +33,25 @@ use Illuminate\Support\Facades\DB;
                 return  'Alunos cadastrados no evento com sucesso';
             }catch(Exception $e){
                 DB::rollback();
-                dd($e);
+                throw new Exception ("Houve um erro ao cadastrar o aluno no evento: " . $e->getMessage());
             }
         }
 
-        public function edit($id){
-            $alunos = Aluno::join('pessoas', 'alunos.id_pessoa', 'pessoas.id')
-                            ->join('pessoas as pessoas_fin', 'alunos.id_resp_fin', 'pessoas_fin.id')
-                            ->select('pessoas.nome as aluno_nome', 'pessoas.cpf as aluno_cpf', 'alunos.id as aluno_id', 'pessoas_fin.nome as fin_nome', 'pessoas_fin.cpf as fin_cpf');
-            $evento = Evento::find($id);
-            $alunosInscritos = Pagamento::where('id_evento', $id)->select('id_aluno as aluno_id')->pluck('aluno_id')->toArray();
-            return [$alunos, $evento, $alunosInscritos];
+        public function edit($id, $req){
+            try{
+                $alunos = Aluno::join('pessoas', 'alunos.id_pessoa', 'pessoas.id')
+                                ->join('pessoas as pessoas_fin', 'alunos.id_resp_fin', 'pessoas_fin.id')
+                                ->select('pessoas.nome as aluno_nome', 'pessoas.cpf as aluno_cpf', 'alunos.id as aluno_id', 'pessoas_fin.nome as fin_nome', 'pessoas_fin.cpf as fin_cpf');
+                if($req->busca){
+                    $alunos->where('pessoas.nome', 'ILIKE', '%'.$req->busca.'%');
+                }
+                $evento = Evento::find($id);
+                $alunosInscritos = Pagamento::where('id_evento', $id)->select('id_aluno as aluno_id')->pluck('aluno_id')->toArray();
+                return [$alunos, $evento, $alunosInscritos];
+
+            }catch(Exception $e){
+                throw new Exception ("Houve um erro ao carregar as informações: " . $e->getMessage());
+
+            }
         }
     }

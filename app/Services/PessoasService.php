@@ -65,19 +65,22 @@ class PessoasService
             }
 
         }catch(Exception $e){
-            dd($e);
             DB::rollback();
-            return "Houve um erro no cadastro: $e";
+            throw new Exception ("Houve um erro no cadastro: " . $e->getMessage());
         }
 
 
     }
 
     public function edit($id){
+        try{
+            $pessoa = pessoa::find($id);
 
-        $pessoa = pessoa::find($id);
+            return $pessoa;
 
-        return $pessoa;
+        }catch(Exception $e){
+            throw new Exception ("Houve um erro no carregar os dados: " . $e->getMessage());
+        }
     }
 
     public function update(Request $req, $id){
@@ -128,8 +131,7 @@ class PessoasService
             return $msg;
         }catch(Exception $e){
             DB::rollback();
-            $msg = "Houve um erro no atualizar: $e";
-            return $msg;
+            throw new Exception ("Houve um erro no atualizar " . $e->getMessage());
         }
 
     }

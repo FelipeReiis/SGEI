@@ -39,7 +39,7 @@
 
     // Monitora o filtro de busca de alunos
     watch(buscaAluno, debounce((value) => {
-        router.get(route('eventos.inscricao', props.evento.id), { busca: value }, { preserveState: true, replace: true });
+        router.get(route('gerencia.edit', props.evento.id), { busca: value }, { preserveState: true, replace: true });
     }, 500));
 
     // Mágica do Checkbox: Ao mudar o aluno selecionado, preenche ou limpa o formulário de cima

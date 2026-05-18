@@ -25,35 +25,43 @@ class TurmaService{
                             ->join('pessoas', 'professors.id_pessoa', 'pessoas.id')
                             ->join('cursos', 'turmas.id_curso', 'cursos.id')
                             ->select('turmas.id','turmas.horario', 'turmas.grau', 'pessoas.nome', 'cursos.nome as curso_nome');
+            if($req->busca){
+                $turmas->where('pessoas.nome', 'ILIKE', '%'.$req->busca.'%');
+            }
             return $turmas;
         }catch(Exception $e){
-            return "erro ao consultar turmas: $e";
+            throw new Exception ("erro ao carregar as turmas: " . $e->getMessage());
         }
     }
 
     public function create(){
-        $professores = Professor::join('pessoas', 'professors.id_pessoa', '=', 'pessoas.id')
-                                ->select(
-                                    'pessoas.id',
-                                    'pessoas.nome',
-                                    DB::raw('ARRAY_AGG(professors.id) as professor_ids'),
-                                    DB::raw('ARRAY_AGG(professors.id_especialidade) as especialidades')
-                                )
-                                ->groupBy('professors.id_pessoa', 'pessoas.nome', 'pessoas.id')
-                                ->get();
-        foreach($professores as $professor){
-            $professor['especialidades'] =  explode(',',str_replace(['{','}'], '', $professor['especialidades']));
+        try{
+            $professores = Professor::join('pessoas', 'professors.id_pessoa', '=', 'pessoas.id')
+                                    ->select(
+                                        'pessoas.id',
+                                        'pessoas.nome',
+                                        DB::raw('ARRAY_AGG(professors.id) as professor_ids'),
+                                        DB::raw('ARRAY_AGG(professors.id_especialidade) as especialidades')
+                                    )
+                                    ->groupBy('professors.id_pessoa', 'pessoas.nome', 'pessoas.id')
+                                    ->get();
+            foreach($professores as $professor){
+                $professor['especialidades'] =  explode(',',str_replace(['{','}'], '', $professor['especialidades']));
+            }
+            $cursos = Curso::all();
+
+            $niveis = Nivel::all();
+
+            $alunos = Aluno::join('pessoas as aluno_pessoa', 'alunos.id_pessoa', 'aluno_pessoa.id')
+                            ->leftjoin('pessoas as pedag_pessoa', 'alunos.id_resp_pedag', 'pedag_pessoa.id')
+                            ->leftjoin('pessoas as fin_pessoa', 'alunos.id_resp_fin', 'fin_pessoa.id')
+                            ->select('aluno_pessoa.nome as aluno_nome', 'pedag_pessoa.nome as pedag_nome', 'alunos.id as aluno_id', 'fin_pessoa.nome as fin_nome', 'aluno_pessoa.cpf as aluno_cpf')->get();
+
+            return [$professores, $cursos, $niveis, $alunos];
+
+        }catch(Exception $e){
+            throw new Exception ("erro ao carregas os dados para cadastrar a turma: " . $e->getMessage());
         }
-        $cursos = Curso::all();
-
-        $niveis = Nivel::all();
-
-        $alunos = Aluno::join('pessoas as aluno_pessoa', 'alunos.id_pessoa', 'aluno_pessoa.id')
-                        ->leftjoin('pessoas as pedag_pessoa', 'alunos.id_resp_pedag', 'pedag_pessoa.id')
-                        ->leftjoin('pessoas as fin_pessoa', 'alunos.id_resp_fin', 'fin_pessoa.id')
-                        ->select('aluno_pessoa.nome as aluno_nome', 'pedag_pessoa.nome as pedag_nome', 'alunos.id as aluno_id', 'fin_pessoa.nome as fin_nome', 'aluno_pessoa.cpf as aluno_cpf')->get();
-
-        return [$professores, $cursos, $niveis, $alunos];
     }
 
     public function store(Request $req){
@@ -86,74 +94,77 @@ class TurmaService{
             $msg = 'Turma cadastrada com sucesso!!';
             return $msg;
         }catch(Exception $e){
-            dd($e);
-            return 'Houve um problema ao cadastrar a turma.';
+            throw new Exception ("Houve um problema ao cadastrar a turma: " . $e->getMessage());
         }
     }
 
     public function edit($id){
-        $turma = Turma::select(
-        'turmas.id',
-        'professors.id_pessoa',
-        'horario',
-        'grau',
-        'id_curso',
-        'turmas.id_nivel',
-        DB::raw('array_agg(professor_dias.dia) as dias')
-            )
-            ->join('professors', 'turmas.id_professor', 'professors.id')
-            ->join('professor_dias', function ($join) {
-                $join->on('turmas.id', '=', 'professor_dias.id_turma')
-                    ->on('turmas.id_professor', '=', 'professor_dias.id_professor');
-            })
-            ->where('turmas.id', $id)
-            ->groupBy(
-                'turmas.id',
-                'professors.id_pessoa',
-                'horario',
-                'grau',
-                'id_curso',
-                'turmas.id_nivel'
-            )
-            ->first();
-        $turma->dias = explode(',', str_replace(['{', '}'],'', $turma->dias));
-        $professores = Professor::join('pessoas', 'professors.id_pessoa', '=', 'pessoas.id')
-                                ->select(
-                                    'pessoas.id',
-                                    'pessoas.nome',
-                                    DB::raw('ARRAY_AGG(professors.id) as professor_ids'),
-                                    DB::raw('ARRAY_AGG(professors.id_especialidade) as especialidades')
-                                )
-                                ->groupBy('professors.id_pessoa', 'pessoas.nome', 'pessoas.id')
-                                ->get();
-        foreach($professores as $professor){
-            $professor['especialidades'] =  explode(',',str_replace(['{','}'], '', $professor['especialidades']));
+        try{
+            $turma = Turma::select(
+            'turmas.id',
+            'professors.id_pessoa',
+            'horario',
+            'grau',
+            'id_curso',
+            'turmas.id_nivel',
+            DB::raw('array_agg(professor_dias.dia) as dias')
+                )
+                ->join('professors', 'turmas.id_professor', 'professors.id')
+                ->join('professor_dias', function ($join) {
+                    $join->on('turmas.id', '=', 'professor_dias.id_turma')
+                        ->on('turmas.id_professor', '=', 'professor_dias.id_professor');
+                })
+                ->where('turmas.id', $id)
+                ->groupBy(
+                    'turmas.id',
+                    'professors.id_pessoa',
+                    'horario',
+                    'grau',
+                    'id_curso',
+                    'turmas.id_nivel'
+                )
+                ->first();
+            $turma->dias = explode(',', str_replace(['{', '}'],'', $turma->dias));
+            $professores = Professor::join('pessoas', 'professors.id_pessoa', '=', 'pessoas.id')
+                                    ->select(
+                                        'pessoas.id',
+                                        'pessoas.nome',
+                                        DB::raw('ARRAY_AGG(professors.id) as professor_ids'),
+                                        DB::raw('ARRAY_AGG(professors.id_especialidade) as especialidades')
+                                    )
+                                    ->groupBy('professors.id_pessoa', 'pessoas.nome', 'pessoas.id')
+                                    ->get();
+            foreach($professores as $professor){
+                $professor['especialidades'] =  explode(',',str_replace(['{','}'], '', $professor['especialidades']));
+            }
+            $cursos = Curso::all();
+
+            $niveis = Nivel::all();
+
+            $alunos = Aluno::join('pessoas as aluno_pessoa', 'alunos.id_pessoa', 'aluno_pessoa.id')
+                            ->leftJoin('aluno_turmas', 'alunos.id', 'aluno_turmas.id_aluno')
+
+                            ->selectRaw("
+                                DISTINCT ON (alunos.id)
+                                aluno_pessoa.nome as aluno_nome,
+                                alunos.id as aluno_id,
+                                aluno_pessoa.cpf as aluno_cpf,
+                                aluno_turmas.id_turma
+                            ")
+
+                            ->orderBy('alunos.id')
+
+                            // prioriza a turma desejada
+                            ->orderByRaw("
+                                CASE
+                                    WHEN aluno_turmas.id_turma = ? THEN 0
+                                    ELSE 1
+                                END
+                            ", [$turma->id])->get();
+            return [$turma, $professores, $cursos, $niveis, $alunos];
+        }catch(Exception $e){
+            throw new Exception ("Houve um problema ao carregar os dados  da turma: " . $e->getMessage());
         }
-        $cursos = Curso::all();
-
-        $niveis = Nivel::all();
-
-        $alunos = Aluno::join('pessoas as aluno_pessoa', 'alunos.id_pessoa', 'aluno_pessoa.id')
-                        ->leftJoin('aluno_turmas', 'alunos.id', 'aluno_turmas.id_aluno')
-
-                        ->selectRaw("
-                            DISTINCT ON (alunos.id)
-                            aluno_pessoa.nome as aluno_nome,
-                            alunos.id as aluno_id,
-                            aluno_pessoa.cpf as aluno_cpf,
-                            aluno_turmas.id_turma
-                        ")
-
-                        ->orderBy('alunos.id')
-
-                        // prioriza a turma desejada
-                        ->orderByRaw("
-                            CASE
-                                WHEN aluno_turmas.id_turma = ? THEN 0
-                                ELSE 1
-                            END
-                        ", [$turma->id])->get();
-        return [$turma, $professores, $cursos, $niveis, $alunos];
     }
 
     public function update(Request $req){
@@ -191,8 +202,8 @@ class TurmaService{
             $msg = 'Turma atualizada com sucesso!';
             return $msg;
         }catch(Exception $e){
-            dd($e);
-            return "Houve um problema ao atualizar a turma: $e";
+            throw new Exception ("Houve um problema ao atualizar a turma: " . $e->getMessage());
+
         }
     }
 }

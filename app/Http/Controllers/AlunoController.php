@@ -25,11 +25,16 @@ class AlunoController extends Controller
     }
 
     public function index(Request $req){
-        $alunos = $this->alunoService->index($req);
-        return Inertia::render('Alunos/index',[
-            'alunos' => $alunos->paginate(10)->withQueryString(),
-            'busca' => $req->only(['busca'])
-        ]);
+        try{
+
+            $alunos = $this->alunoService->index($req);
+            return Inertia::render('Alunos/index',[
+                'alunos' => $alunos->paginate(10)->withQueryString(),
+                'busca' => $req->only(['busca'])
+            ]);
+        }catch(Exception $e){
+            return redirect()->back()->with('erro', $e->getMessage());
+        }
     }
 
     public function create(){
@@ -46,16 +51,21 @@ class AlunoController extends Controller
             return redirect()->route('alunos.index')->with('sucesso', 'Aluno cadastrado com sucesso!');
 
         }catch(Exception $e){
-            return redirect()->route('alunos.index')->with('erro', 'houve um erro ao tentar cadastrar: '.$e );
+            return redirect()->route('alunos.index')->with('erro', $e->getMessage());
         }
 
     }
 
     public function edit($id){
-       $aluno = $this->alunoService->edit($id);
-        return Inertia::render('Alunos/create_edit', [
-            'aluno' => $aluno,
-        ]);
+        try{
+            $aluno = $this->alunoService->edit($id);
+            return Inertia::render('Alunos/create_edit', [
+                'aluno' => $aluno,
+            ]);
+        }catch(Exception  $e){
+            return redirect()->back()->with('erro', $e->getMessage());
+        }
+
 
     }
 
@@ -67,7 +77,7 @@ class AlunoController extends Controller
             $this->dadosBancario->update($req);
             return redirect()->route('alunos.index')->with('sucesso', $alunoMsg);
         }catch(Exception $e){
-            return redirect()->route('alunos.index')->with('erro', 'houve um erro ao tentar atualizar os dados: '.$e);
+            return redirect()->route('alunos.index')->with('erro', $e->getMessage());;
         }
 
     }

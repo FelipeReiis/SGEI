@@ -36,7 +36,7 @@
             }catch(Exception $e){
                 dd($e);
                 DB::rollback();
-                return "houve um problema ao cadastrar o evento: $e";
+                throw new Exception ("Houve um problema ao cadastrar o evento: " . $e->getMessage());
             }
         }
 
@@ -46,7 +46,7 @@
                 $evento->imagem = $evento->imagem ? Storage::url($evento->imagem) : null;
                 return $evento;
             }catch(Exception $e){
-                return "Houve um problema ao resgatar os dados do evento: $e";
+                throw new Exception ("Houve um problema ao resgatar os dados do evento: " . $e->getMessage());
             }
         }
 
@@ -90,10 +90,8 @@
 
                 return 'Evento atualizado com sucesso!';
             } catch (Exception $e) {
-                dd($e);
                 DB::rollBack();
-
-                return "Houve um problema ao atualizar o evento: $e";
+                throw new Exception ("Houve um problema ao atualizar o evento: " . $e->getMessage());
             }
         }
 
@@ -103,7 +101,7 @@
 
                 return 'Evento deletado com sucesso.';
             }catch(Exception $e){
-                return 'Houve um erro ao excluir o evento: '.$e;
+                throw new Exception ("Houve um erro ao excluir o evento: " . $e->getMessage());
             }
         }
 

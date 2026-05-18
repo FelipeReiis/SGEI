@@ -42,7 +42,6 @@
             class="form-control w-25 rounded-pill"
             placeholder="Buscar..."
         >
-        <Link href="/eventos/create"><button class="btn btn-pink rounded-pill" >+ Novo Evento</button></Link>
       </template>
 
       <template #name="{ linha }">

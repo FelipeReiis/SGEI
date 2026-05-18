@@ -38,9 +38,9 @@ class DadosBancarios{
                 return true;
 
         }catch(Exception $e){
-            dd($e);
             DB::rollback();
-            return "Ocorreu um erro ao cadastrar os dados bancarios: $e";
+            throw new Exception ("Ocorreu um erro ao cadastrar os dados bancarios: " . $e->getMessage());
+
         }
     }
 
@@ -59,7 +59,8 @@ class DadosBancarios{
             DB::commit();
         }catch(Exception $e){
             DB::rollback();
-            return "Ocorreu um erro ao atualizar os dados bancarios: $e";
+            throw new Exception ("Ocorreu um erro ao atualizar os dados bancarios: " . $e->getMessage());
+
         }
     }
 }

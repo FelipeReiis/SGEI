@@ -17,12 +17,17 @@ class TurmaController extends Controller
         $this->turmaService= $turmaService;
     }
     public function index(Request $req){
-        $turmas = $this->turmaService->index($req);
+        try{
+            $turmas = $this->turmaService->index($req);
 
-        return Inertia::render('Turmas/index',[
-            'turmas' => $turmas->paginate(10)->withQueryString(),
-            'busca'=> $req->only(['busca'])
-        ]);
+            return Inertia::render('Turmas/index',[
+                'turmas' => $turmas->paginate(10)->withQueryString(),
+                'busca'=> $req->only(['busca'])
+            ]);
+
+        }catch(Exception $e){
+            return redirect()->back()->with('erro', 'Houve um erro ao atualizar a turma: '.$e);
+        }
     }
 
     public function create(){
@@ -42,8 +47,7 @@ class TurmaController extends Controller
 
             return redirect()->route('turmas.index')->with('sucesso', $msg);
         }catch(Exception $e){
-            dd($e);
-
+            return redirect()->back()->with('erro', $e->getMessage());
         }
     }
 
@@ -58,7 +62,8 @@ class TurmaController extends Controller
                 'alunos' => $alunos,
             ]);
         }catch(Exception $e){
-            dd($e);
+            return redirect()->back()->with('erro', $e->getMessage());
+
         }
     }
 
@@ -67,7 +72,7 @@ class TurmaController extends Controller
             $msg = $this->turmaService->update($req);
             return redirect()->route('turmas.index')->with('sucesso', $msg);
         }catch(Exception $e){
-            return redirect()->route('turmas.index')->with('erro', 'Houve um erro ao atualizar a turma: '.$e);
+            return redirect()->route('turmas.index')->with('erro', $e->getMessage());
         }
     }
 }

@@ -26,7 +26,6 @@ watch(busca, debounce((value) => {
   router.get('/alunos', { busca: value }, { preserveState: true, replace: true });
 }, 500));
 
-// Função de Ordenação (O componente emite 'sort')
 const handleSort = (key) => {
     // Aqui você chamaria o backend passando ?sort=key
     console.log("Ordenar por:", key);

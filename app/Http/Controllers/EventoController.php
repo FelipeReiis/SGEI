@@ -18,11 +18,19 @@ class EventoController extends Controller
         $this->eventoService = $eventoService;
     }
 
-    public function index(){
-        $eventos =  Evento::select('id', 'nome', 'data', 'valor', 'status');
-        return Inertia::render('Evento/index',[
-            'eventos' => $eventos->paginate(10)->withQueryString()
-        ]);
+    public function index(Request $req){
+        try{
+            $eventos =  Evento::select('id', 'nome', 'data', 'valor', 'status');
+            if($req->busca){
+                $eventos->where('nome', 'ILIKE', '%'.$req->busca.'%');
+            }
+            return Inertia::render('Evento/index',[
+                'eventos' => $eventos->paginate(10)->withQueryString()
+            ]);
+
+        }catch(Exception $e){
+            return redirect()->back()->with('erro', $e->getMessage());
+        }
     }
 
     public function create(){
@@ -36,7 +44,8 @@ class EventoController extends Controller
             return redirect()->route('eventos.index')->with('sucesso', $msg);
 
         }catch(Exception $e){
-            return redirect()->route('eventos.index')->with('erro', 'Houve um problema ao cadastrar o evento:'.$e);
+            return redirect()->route('eventos.index')()->with('erro', $e->getMessage());
+
         }
     }
 
@@ -47,7 +56,7 @@ class EventoController extends Controller
                 'evento' => $evento
             ]);
         }catch(Exception $e){
-            return 'Houve um problema ao tentar resgatar informaçoes do evento '.$e;
+            return redirect()->back()()->with('erro', $e->getMessage());
         }
     }
 
@@ -58,13 +67,18 @@ class EventoController extends Controller
             return redirect()->route('eventos.index')->with('sucesso', $msg);
 
         }catch(Exception $e){
-            return redirect()->route('eventos.index')->with('erro', 'Houve um problema ao cadastrar o evento:'. $e);
+            return redirect()->route('eventos.index')()->with('erro', $e->getMessage());
         }
     }
 
     public function destroy($id){
-        $msg = $this->eventoService->delete($id);
-        return redirect()->route('eventos.index')->with('sucesso', $msg);
+        try{
+            $msg = $this->eventoService->delete($id);
+            return redirect()->route('eventos.index')->with('sucesso', $msg);
+
+        }catch(Exception $e){
+            return redirect()->back()->with('erro', $e->getMessage());
+        }
 
     }
 }

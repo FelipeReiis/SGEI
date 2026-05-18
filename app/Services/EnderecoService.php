@@ -58,9 +58,9 @@ class EnderecoService
         }
 
         }catch(Exception $e){
-            dd($e);
             DB::rollback();
-            return "Ocorreu um erro ao cadastrar: $e";
+            throw new Exception ("Ocorreu um erro ao cadastrar: " . $e->getMessage());
+
         }
 
     }
@@ -117,10 +117,8 @@ class EnderecoService
             $msg = 'Registro atualizado com sucesso!';
             return $msg;
         }catch(Exception $e){
-            dd($e);
             DB::rollback();
-            $msg = "Erro ao atualizar registro: $e";
-            return $msg;
+            throw new Exception ("Erro ao atualizar registro: " . $e->getMessage());
         }
     }
 }

@@ -21,23 +21,31 @@ class FuncionarioService
 
     public function index(Request $req)
     {
-        $funcionarios = pessoa::select('nome', 'cpf', 'id')->where('funcionario', 1);
+        try{
 
-        if ($req->busca) {
-            $funcionarios->where('nome', 'like', '%' . $req->busca . '%');
+            $funcionarios = pessoa::select('nome', 'cpf', 'id')->where('funcionario', 1);
+
+            if ($req->busca) {
+                $funcionarios->where('nome', 'ILIKE', '%' . $req->busca . '%');
+            }
+
+            return $funcionarios;
+
+        }catch(Exception $e){
+            throw new Exception ("Houve um erro ao carregar os funcionarios: " . $e->getMessage());
         }
-
-        return $funcionarios;
     }
 
     public function edit($id)
     {
         try {
+
             $funcionario = Pessoa::with(['endereco', 'bancario', 'professor'])->find($id);
             $especialidadesIds = $funcionario->professor ? $funcionario->professor->pluck('id_especialidade')->toArray() : [];
             return [$funcionario, $especialidadesIds];
+
         } catch (Exception $e) {
-            return "houve um erro ao buscar o funcionario: $e";
+            throw new Exception ("houve um erro ao buscar o funcionario: " . $e->getMessage());
         }
     }
 
@@ -50,7 +58,8 @@ class FuncionarioService
                 ]);
             }
         }catch(Exception $e){
-            return 'Houve um erro ao criar o Professor.';
+            throw new Exception ("Houve um erro ao criar o Professor: " . $e->getMessage());
+
         }
     }
 
@@ -68,7 +77,7 @@ class FuncionarioService
                 }
 
         }catch(Exception $e){
-            return 'Houve um erro ao atualizar as especialidades: '.$e;
+            throw new Exception ("Houve um erro ao atualizar as especialidades: " . $e->getMessage());
         }
     }
 
