@@ -29,6 +29,14 @@ class FuncionarioService
                 $funcionarios->where('nome', 'ILIKE', '%' . $req->busca . '%');
             }
 
+            if($req->sort){
+                if($req->sort == 'nome')
+                    $funcionarios->orderBy('nome');
+                else{
+                    $funcionarios->orderBy('cpf');
+                }
+            }
+            
             return $funcionarios;
 
         }catch(Exception $e){

@@ -28,6 +28,18 @@ class TurmaService{
             if($req->busca){
                 $turmas->where('pessoas.nome', 'ILIKE', '%'.$req->busca.'%');
             }
+
+            if($req->sort){
+                if($req->sort == 'nome'){
+                    $turmas->orderBy('pessoas.nome');
+                }else if($req->sort == 'curso_nome')
+                    $turmas->orderBy('curso_nome');
+                else if($req->sort == 'grau')
+                    $turmas->orderBy('grau');
+                else{
+                    $turmas->orderBy('horario');
+                }
+            }
             return $turmas;
         }catch(Exception $e){
             throw new Exception ("erro ao carregar as turmas: " . $e->getMessage());

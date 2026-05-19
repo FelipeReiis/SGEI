@@ -20,12 +20,11 @@
     const busca = ref(props.busca || '');
 
     watch(busca, debounce((value) => {
-    router.get('/turmas', { busca: value }, { preserveState: true, replace: true });
+        router.get('/turmas', { busca: value }, { preserveState: true, replace: true });
     }, 500));
 
     const handleSort = (key) => {
-        // Aqui você chamaria o backend passando ?sort=key
-        console.log("Ordenar por:", key);
+        router.get('/turmas', { sort: key }, { preserveState: true, replace: true })
     };
 
 </script>

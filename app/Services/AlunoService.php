@@ -30,6 +30,15 @@ class AlunoService
             $alunos->where('aluno_pessoa.nome', 'ILIKE', '%'.$req->busca.'%');
         }
 
+        if($req->sort){
+            if($req->sort == 'aluno_nome')
+                $alunos->orderBy('aluno_pessoa.nome');
+            else if($req->sort == 'fin_nome')
+                $alunos->orderBy('fin_pessoa.nome');
+            else if($req->sort == 'pedag_nome')
+                $alunos->orderBy('pedag_pessoa.nome');
+        }
+
         return $alunos;
     }catch(Exception $e){
         throw new Exception ("Erro ao carregar os alunos: " . $e->getMessage());

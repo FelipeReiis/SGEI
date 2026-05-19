@@ -24,6 +24,14 @@ class EventoController extends Controller
             if($req->busca){
                 $eventos->where('nome', 'ILIKE', '%'.$req->busca.'%');
             }
+            if($req->sort){
+                if($req->sort == 'nome')
+                    $eventos->orderBy('nome', 'asc');
+                else if($req->sort == 'data')
+                    $eventos->orderBy('data', 'asc');
+                else if ($req->sort == 'status')
+                    $eventos->orderBy('status','asc');
+            }
             return Inertia::render('Evento/index',[
                 'eventos' => $eventos->paginate(10)->withQueryString()
             ]);

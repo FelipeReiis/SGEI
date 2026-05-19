@@ -45,6 +45,13 @@ use Illuminate\Support\Facades\DB;
                 if($req->busca){
                     $alunos->where('pessoas.nome', 'ILIKE', '%'.$req->busca.'%');
                 }
+                if($req->sort){
+                    if($req->sort == 'aluno_nome')
+                        $alunos->orderBy('aluno_nome');
+                    else{
+                        $alunos->orderBy('aluno_cpf');
+                    }
+                }
                 $evento = Evento::find($id);
                 $alunosInscritos = Pagamento::where('id_evento', $id)->select('id_aluno as aluno_id')->pluck('aluno_id')->toArray();
                 return [$alunos, $evento, $alunosInscritos];

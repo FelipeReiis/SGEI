@@ -26,6 +26,18 @@ class GerenciadorController extends Controller
             if($req->busca){
                 $eventos->where('nome', 'ILIKE', '%'.$req->busca.'%');
             }
+            if($req->sort){
+            dd($req->sort);
+                if($req->sort == 'nome')
+                    $eventos->orderBy('nome', 'asc');
+                else if($req->sort == 'data')
+                    $eventos->orderBy('data', 'asc');
+                else if ($req->sort == 'status')
+                    $eventos->orderBy('status','asc');
+                else{
+                    $eventos->orderBy('valor','asc');
+                }
+            }
             return Inertia::render('Gerencia/index',[
                 'eventos' => $eventos->paginate(10)->withQueryString()
             ]);

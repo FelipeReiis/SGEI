@@ -27,7 +27,7 @@ watch(busca, debounce((value) => {
 }, 500));
 
 const handleSort = (key) => {
-    // Aqui você chamaria o backend passando ?sort=key
+    router.get('/alunos', { sort: key }, { preserveState: true, replace: true });
     console.log("Ordenar por:", key);
 };
 </script>

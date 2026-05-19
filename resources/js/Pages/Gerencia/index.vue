@@ -24,8 +24,7 @@
     }, 500));
 
     const handleSort = (key) => {
-        // Aqui você chamaria o backend passando ?sort=key
-        console.log("Ordenar por:", key);
+        router.get('/gerencia', { sort: key }, { preserveState: true, replace: true });
     };
 </script>
 

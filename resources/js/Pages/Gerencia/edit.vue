@@ -21,7 +21,6 @@
         { label: 'CPF', key: 'aluno_cpf', sortable: true },
         { label: 'Status no Evento', key: 'status_inscricao', sortable: false },
     ];
-    console.log(props.inscritosIds);
     // Estado para controlar qual aluno está selecionado no momento (Checkbox ativo)
     const alunoSelecionadoId = ref(null);
     const buscaAluno = ref(props.busca || '');
@@ -41,6 +40,10 @@
     watch(buscaAluno, debounce((value) => {
         router.get(route('gerencia.edit', props.evento.id), { busca: value }, { preserveState: true, replace: true });
     }, 500));
+
+    const handleSort = (key) => {
+         router.get(route('gerencia.edit', props.evento.id), { sort: key }, { preserveState: true, replace: true })
+    };
 
     // Mágica do Checkbox: Ao mudar o aluno selecionado, preenche ou limpa o formulário de cima
     watch(alunoSelecionadoId, (novoId) => {
@@ -183,7 +186,7 @@
         <div class="card-custom shadow-sm p-4 bg-white rounded-4">
             <h5 class="fw-bold mb-3 text-secondary">👥 Listagem de Alunos</h5>
 
-            <DataTable :colunas="colunas" :linhas="props.alunos">
+            <DataTable :colunas="colunas" :linhas="props.alunos" @sort="handleSort">
 
                 <div class="d-flex justify-content-center mt-3">
                     <nav>
