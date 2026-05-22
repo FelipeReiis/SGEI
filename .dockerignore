@@ -1,0 +1,7 @@
+.env
+node_modules
+vendor
+public/build
+storage/*.key
+.git
+Docker/README.md

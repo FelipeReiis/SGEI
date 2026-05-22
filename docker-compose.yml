@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile # 💡 Força o Docker a ler o NOSSO Dockerfile, não o do Sail
+    container_name: app_producao
+    restart: always
+    ports:
+      - "80:80"
+    env_file:
+      - .env
