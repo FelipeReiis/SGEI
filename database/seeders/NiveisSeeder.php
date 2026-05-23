@@ -17,7 +17,7 @@ class NiveisSeeder extends Seeder
             ['id_curso' => 2, 'nivel' => 'Intermediario'],
             ['id_curso' => 2, 'nivel' => 'Avançado'],
 
-            // --- Níveis de Ballet (id_curso = 1) ---
+            
             ['id_curso' => 1, 'nivel' => 'Baby class'],
             ['id_curso' => 1, 'nivel' => 'Iniciação'],
             ['id_curso' => 1, 'nivel' => 'Pre-primary'],

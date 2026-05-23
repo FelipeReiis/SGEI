@@ -18,11 +18,11 @@ RUN cp .env.example .env
 RUN npm run build
 
 # ==========================================
-# ESTÁGIO 2: Imagem de Produção Otimizada (PHP 8.3 + Nginx)
+# ESTÁGIO 2: Imagem de Produção Otimizada (PHP 8.4 + Nginx)
 # ==========================================
 FROM php:8.4-fpm-alpine
 
-# Instala apenas as dependências de sistema para o seu ambiente (Nginx, Supervisor, Git, Zip e Postgres)
+# Instala as dependências de sistema essenciais
 RUN apk update && apk add --no-cache \
     nginx \
     supervisor \
@@ -36,29 +36,31 @@ RUN apk update && apk add --no-cache \
     git \
     postgresql-dev
 
-# Instala as extensões nativas que seu Laravel 12 e Banco de Dados precisam:
-# - pdo_pgsql: conexão direta com seu banco Postgres
-# - gd e exif: cruciais para o upload das imagens dos comprovantes sem quebra de rotação
+# Instala as extensões nativas do PHP
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo pdo_pgsql exif gd zip opcache
 
-# Traz o binário do Composer para gerenciar seu composer.json
+# Traz o binário do Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# 💡 PADRÃO DEFINITIVO: Mantemos em /var/www para alinhar com o erro do print
 WORKDIR /var/www
 
-# Copia a estrutura do Laravel
+# Copia a estrutura do Laravel para a pasta raiz correta
 COPY . .
 
-# Copia o resultado do "npm run build" do primeiro estágio direto para a pasta pública
-COPY --from=frontend-builder /app/public/build /var/www/html/public/build
+# Copia o build do Vite vindo do estágio anterior para ./public/build
+COPY --from=frontend-builder /app/public/build ./public/build
 
-# Instala as dependências de produção do Composer (ignora require-dev como sail, breeze, pint)
+# Instala as dependências de produção do Composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 
-# Aplica as permissões corretas para que o upload dos comprovantes funcione no storage
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Garante que as pastas existam em /var/www antes de dar permissões
+RUN mkdir -p /var/www/storage /var/www/bootstrap/cache
+
+# Aplica as permissões corretas para o servidor web e uploads funcionarem
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
 # Copia os arquivos de configuração do servidor
 COPY docker/nginx.conf /etc/nginx/nginx.conf

@@ -4,10 +4,12 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile # 💡 Força o Docker a ler o NOSSO Dockerfile, não o do Sail
+      dockerfile: Dockerfile
     container_name: app_producao
     restart: always
     ports:
       - "80:80"
+    volumes:
+      - .:/var/www  
     env_file:
       - .env

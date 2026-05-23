@@ -24,7 +24,8 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             CursosSeeder::class,
-            NiveisSeeder::class
+            NiveisSeeder::class,
+            ProfissoesSeeder::class
         ]);
     }
 }
