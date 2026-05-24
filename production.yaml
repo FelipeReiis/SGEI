@@ -10,6 +10,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - .:/var/www  
+      - .:/var/www
+      - /var/www/public/build
     env_file:
       - .env

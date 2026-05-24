@@ -27,7 +27,6 @@ class GerenciadorController extends Controller
                 $eventos->where('nome', 'ILIKE', '%'.$req->busca.'%');
             }
             if($req->sort){
-            dd($req->sort);
                 if($req->sort == 'nome')
                     $eventos->orderBy('nome', 'asc');
                 else if($req->sort == 'data')

@@ -1,6 +1,10 @@
+<script setup>
+    const anoAtual = new Date().getFullYear()
+</script>
+
 <template>
   <div class="footer-inner">
-    &copy; 2024 Minha Empresa - Todos os direitos reservados.
+    &copy; {{ anoAtual }} Minha Empresa - Todos os direitos reservados.
   </div>
 </template>
 

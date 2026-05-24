@@ -1,68 +1,60 @@
 <script setup>
 import MainLayout from '@/Layouts/MainLayout.vue';
-import { Head } from '@inertiajs/vue3';
+    import { Head, router, usePage } from '@inertiajs/vue3';
+    const page = usePage();
+    // Resgata o nome do usuário logado (geralmente mapeado em auth.user.name)
+    const userName = page.props.auth?.user?.name || 'teste';
+
+    // Função para navegar usando o Inertia para as sessões do menu
+    const irPara = (rota) => {
+        router.visit(rota);
+    };
 </script>
 
 <template>
-    <Head title="Dashboard" />
+    <Head title="Bem-vindo" />
 
     <MainLayout>
         <div class="dashboard-header">
-          <h2>Dashboard</h2>
-          <p>Bem-vindo de volta! Aqui está o resumo.</p>
+          <h2>Olá, {{ userName }}! 👋</h2>
+          <p>Seja bem-vindo ao SGEI. Para onde você gostaria de ir hoje?</p>
         </div>
 
-        <div class="cards-grid">
-            <div class="card">
+        <div class="cards-grid welcome-grid">
+
+            <div class="card clickable-card" @click="irPara('/secretaria')">
                 <div class="card-info">
-                    <span class="card-label">Usuários Ativos</span>
-                    <strong class="card-value">2,543</strong>
-                    <span class="card-grow positive">+12% vs mês anterior</span>
+                    <span class="card-label">Área Administrativa</span>
+                    <strong class="card-value-title">Secretaria</strong>
+                    <p class="card-description">Gerencie alunos, turmas e professores.</p>
+                    <button class="btn-welcome">Acessar Secretaria</button>
                 </div>
-                <div class="card-icon">👥</div>
             </div>
 
-            <div class="card">
+            <div class="card clickable-card" @click="irPara('/inscricoes')">
                 <div class="card-info">
-                    <span class="card-label">Receita</span>
-                    <strong class="card-value">R$ 45.2k</strong>
-                    <span class="card-grow positive">+23% vs mês anterior</span>
+                    <span class="card-label">Fluxo de Alunos</span>
+                    <strong class="card-value-title">Inscrições</strong>
+                    <p class="card-description">Acompanhe novos cadastros e controle o status de matrículas.</p>
+                    <button class="btn-welcome">Ver Inscrições</button>
                 </div>
-                <div class="card-icon pink-bg">💲</div>
             </div>
 
-             <div class="card">
-                <div class="card-info">
-                    <span class="card-label">Crescimento</span>
-                    <strong class="card-value">18.5%</strong>
-                    <span class="card-grow negative">+5% vs mês anterior</span>
-                </div>
-                <div class="card-icon">📈</div>
-            </div>
         </div>
 
-        <div class="content-section">
-            <h3>Atividades Recentes</h3>
-            <div class="placeholder-list">
-                <div class="list-item" v-for="i in 3" :key="i">
-                    <div class="dot"></div>
-                    <div>
-                        <strong>Novo usuário registrado</strong>
-                        <p>Há 2 horas</p>
-                    </div>
-                </div>
-            </div>
+        <div class="content-section help-section">
+            <p>Precisa de ajuda? Entre em contato com o administrador do sistema.</p>
         </div>
 
     </MainLayout>
 </template>
 
 <style scoped>
+/* --- SEUS ESTILOS ORIGINAIS PRESERVADOS --- */
 .dashboard-header { margin-bottom: 30px; }
 .dashboard-header h2 { font-size: 2rem; color: #333; margin: 0; }
 .dashboard-header p { color: #888; }
 
-/* Grid dos Cards */
 .cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -81,12 +73,8 @@ import { Head } from '@inertiajs/vue3';
     border: 1px solid #f0f0f0;
 }
 
-.card-info { display: flex; flex-direction: column; }
+.card-info { display: flex; flex-direction: column; width: 80%; }
 .card-label { color: #888; font-size: 0.9rem; margin-bottom: 5px; }
-.card-value { font-size: 1.8rem; color: #222; margin-bottom: 5px; }
-.card-grow { font-size: 0.8rem; font-weight: 500; }
-.card-grow.positive { color: #10b981; } /* Verde */
-
 .card-icon {
     background-color: #ff0055;
     color: white;
@@ -94,21 +82,72 @@ import { Head } from '@inertiajs/vue3';
     border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
     font-size: 1.5rem;
+    flex-shrink: 0;
 }
 
-/* Área inferior */
 .content-section {
     background: white;
-    padding: 30px;
+    padding: 20px 30px;
     border-radius: 16px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    border: 1px solid #f0f0f0;
 }
 
-.list-item {
-    display: flex;
-    align-items: center;
-    padding: 15px 0;
-    border-bottom: 1px solid #eee;
+/* --- NOVOS ESTILOS ADAPTADOS AO SEU DESIGN --- */
+.welcome-grid {
+    /* Ajusta para duas colunas maiores ao invés de três menores */
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 }
-.dot { width: 10px; height: 10px; background: #ff0055; border-radius: 50%; margin-right: 15px; }
+
+.card-value-title {
+    font-size: 1.6rem;
+    color: #222;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.card-description {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: 20px;
+    min-height: 40px; /* Mantém os dois cards alinhados */
+}
+
+/* Botão no tom de rosa (#ff0055) da sua logo */
+.btn-welcome {
+    background-color: #ff0055;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    align-self: flex-start;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+/* Efeitos de Interação (Hover) */
+.clickable-card {
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.clickable-card:hover {
+    transform: translateY(-3px);
+    border-color: #ffb3cc;
+    box-shadow: 0 8px 16px rgba(255, 0, 85, 0.04);
+}
+
+.clickable-card:hover .btn-welcome {
+    background-color: #d60047;
+}
+
+.help-section p {
+    color: #777;
+    font-size: 0.85rem;
+    margin: 0;
+    text-align: center;
+}
 </style>

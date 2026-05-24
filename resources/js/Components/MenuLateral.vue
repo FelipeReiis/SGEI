@@ -31,6 +31,7 @@ const menuItems = [
     icon: '📂',
     children: [
       { label: 'Eventos', route: '/gerencia' },
+      { label: 'Mensalidades', route: '/mensalidades' },
     ]
   },
 ];

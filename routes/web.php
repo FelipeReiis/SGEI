@@ -4,6 +4,7 @@ use App\Http\Controllers\AlunoController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\FuncionarioController;
 use App\Http\Controllers\GerenciadorController;
+use App\Http\Controllers\GerenciaMensalidadeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TurmaController;
 use Illuminate\Foundation\Application;
@@ -36,6 +37,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('/turmas', TurmaController::class);
     Route::resource('/eventos', EventoController::class);
     Route::resource('/gerencia',GerenciadorController::class);
+    Route::resource('/mensalidades',GerenciaMensalidadeController::class);
 });
 
 require __DIR__.'/auth.php';

@@ -5,10 +5,9 @@
     use App\Models\Aluno;
     use App\Models\Evento;
     use App\Models\Pagamento;
-    use Carbon\Carbon;
     use Exception;
-use GuzzleHttp\Psr7\Request;
-use Illuminate\Support\Facades\DB;
+    use GuzzleHttp\Psr7\Request;
+    use Illuminate\Support\Facades\DB;
 
     class GerenciaService
     {
@@ -19,7 +18,7 @@ use Illuminate\Support\Facades\DB;
                 $valorEvento = Evento::where('id', $req->evento_id)->select('valor','nome')->first();
                 if($req->hasFile('comprovante')){
                     $arquivo = $req->file('comprovante');
-                    $nomeNovo = str_replace(' ', '-',$$valorEvento->nome).'-'.Carbon::now()->format('Y-m-d').$arquivo->getClientOriginalName();
+                    $nomeNovo = str_replace(' ', '-',$valorEvento->nome).'-'.Carbon::now()->format('Y-m-d').$arquivo->getClientOriginalName();
                     $caminho = $req->file('comprovante')->storeAs('comprovantes_eventos', $nomeNovo, 'public');
                 }
                 Pagamento::create([

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('mensalidades', function (Blueprint $table) {
             $table->id();
-            $table->string('mes', length:2);
+            $table->string('mes', length:15);
             $table->string('ano', length:4);
             $table->decimal('valor', total:8, places:2);
             $table->date('data_vencimento');

@@ -8,7 +8,7 @@
     defineOptions({ layout: MainLayout });
 
     const props = defineProps({
-        evento: Object,       // Dados do evento atual
+        mensalidade: Object,       // Dados da mensalidade atual
         alunos: Object,        // Lista de todos os alunos para a DataTable
         inscritosIds: Array,  // Array simples com IDs dos alunos já inscritos, ex: [1, 3, 5]
         busca: String
@@ -19,7 +19,7 @@
         { label: 'Selecionar', key: 'selecao', sortable: false },
         { label: 'Aluno', key: 'aluno_nome', sortable: true },
         { label: 'CPF', key: 'aluno_cpf', sortable: true },
-        { label: 'Status no Evento', key: 'status_inscricao', sortable: false },
+        { label: 'Status da Mensalidade', key: 'status_inscricao', sortable: false },
     ];
     // Estado para controlar qual aluno está selecionado no momento (Checkbox ativo)
     const alunoSelecionadoId = ref(null);
@@ -27,7 +27,7 @@
 
     // Formulário do Inertia
     const formulario = useForm({
-        evento_id: props.evento?.id ?? '',
+        mensalidade_id: props.mensalidade?.id ?? '',
         aluno_id: '',
         aluno_nome: '',
         aluno_cpf: '',
@@ -38,11 +38,11 @@
 
     // Monitora o filtro de busca de alunos
     watch(buscaAluno, debounce((value) => {
-        router.get(route('gerencia.edit', props.evento.id), { busca: value }, { preserveState: true, replace: true });
+        router.get(route('mensalidades.edit', props.mensalidade.id), { busca: value }, { preserveState: true, replace: true });
     }, 500));
 
     const handleSort = (key) => {
-         router.get(route('gerencia.edit', props.evento.id), { sort: key }, { preserveState: true, replace: true })
+         router.get(route('mensalidades.edit', props.mensalidade.id), { sort: key }, { preserveState: true, replace: true })
     };
 
     // Mágica do Checkbox: Ao mudar o aluno selecionado, preenche ou limpa o formulário de cima
@@ -87,7 +87,7 @@
         }
 
         // Como enviamos arquivo, usamos POST para a rota que vai salvar na tabela pivô
-        formulario.post(route('gerencia.store'), {
+        formulario.post(route('mensalidades.store'), {
             forceFormData: true,
             preserveScroll: true,
             onSuccess: () => {
@@ -115,8 +115,8 @@
 <template>
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="text-pink mb-0">Inscrições: {{ props.evento?.nome }}</h2>
-            <Link :href="route('gerencia.index')" class="btn btn-outline-secondary rounded-pill">
+            <h2 class="text-pink mb-0">Inscrições: {{ props.mensalidade?.mes }}</h2>
+            <Link :href="route('mensalidades.index')" class="btn btn-outline-secondary rounded-pill">
                 Voltar para Eventos
             </Link>
         </div>
@@ -127,12 +127,12 @@
                 <div class="row g-3">
 
                     <div class="col-md-6">
-                        <label class="form-label text-muted small">Nome do Evento</label>
-                        <input type="text" :value="props.evento?.nome" class="form-control bg-light" readonly>
+                        <label class="form-label text-muted small">Mensalidade</label>
+                        <input type="text" :value="props.mensalidade?.mes" class="form-control bg-light" readonly>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label text-muted small">Valor do Evento</label>
-                        <input type="text" :value="formatarMoeda(props.evento?.valor)" class="form-control bg-light" readonly>
+                        <label class="form-label text-muted small">Valor do mensalidade</label>
+                        <input type="text" :value="formatarMoeda(props.mensalidade?.valor)" class="form-control bg-light" readonly>
                     </div>
 
                     <hr class="my-3 text-muted opacity-25">
@@ -233,13 +233,13 @@
 
                 <template #status_inscricao="{ linha }">
                     <span v-if="props.inscritosIds.includes(linha.aluno_id)" class="badge bg-success rounded-pill px-3">
-                        ✓ Já Inscrito
+                        ✓ Pago
                     </span>
                     <span v-else-if="alunoSelecionadoId === linha.aluno_id" class="badge bg-pink rounded-pill px-3">
                         ✍️ Selecionado no Painel
                     </span>
                     <span v-else class="badge bg-light text-muted border rounded-pill px-3">
-                        Não Vinculado
+                        Não Pago
                     </span>
                 </template>
             </DataTable>
