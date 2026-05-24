@@ -62,6 +62,8 @@ RUN mkdir -p /var/www/storage /var/www/bootstrap/cache
 # Aplica as permissões corretas para o servidor web e uploads funcionarem
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
+
+
 # Copia os arquivos de configuração do servidor
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY docker/supervisord.conf /etc/supervisord.conf

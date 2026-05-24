@@ -48,11 +48,13 @@ class EventoController extends Controller
     public function store(EventoRequest $req){
         try{
             $msg = $this->eventoService->store($req);
+            if($msg === 'Já existe um evento com os mesmos dados.')
+                return redirect()->back()->with('erro', $msg);
 
             return redirect()->route('eventos.index')->with('sucesso', $msg);
 
         }catch(Exception $e){
-            return redirect()->route('eventos.index')()->with('erro', $e->getMessage());
+            return redirect()->back()()->with('erro', $e->getMessage());
 
         }
     }
@@ -64,7 +66,7 @@ class EventoController extends Controller
                 'evento' => $evento
             ]);
         }catch(Exception $e){
-            return redirect()->back()()->with('erro', $e->getMessage());
+            return redirect()->back()->with('erro', $e->getMessage());
         }
     }
 
@@ -75,7 +77,7 @@ class EventoController extends Controller
             return redirect()->route('eventos.index')->with('sucesso', $msg);
 
         }catch(Exception $e){
-            return redirect()->route('eventos.index')()->with('erro', $e->getMessage());
+            return redirect()->back()->with('erro', $e->getMessage());
         }
     }
 

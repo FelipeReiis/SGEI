@@ -46,18 +46,20 @@ class AlunoService
 
     }
 
-    public function store($idPessoaAluno){
+    public function store($idPessoaAluno, $escola){
         DB::beginTransaction();
         try{
             Aluno::create([
                 'id_resp_fin' => isset($idPessoaAluno[2]['financeiro']) ? $idPessoaAluno[2]['financeiro'] : $idPessoaAluno[1]['pedagogico'],
                 'id_resp_pedag' => isset($idPessoaAluno[1]['pedagogico']) ? $idPessoaAluno[1]['pedagogico'] : $idPessoaAluno[1]['financeiro'],
                 'id_pessoa' => $idPessoaAluno[0]['aluno'],
+                'escola' => $escola,
             ]);
             DB::commit();
             $msg = 'Aluno registrado com sucesso!';
             return $msg;
         }catch(Exception $e){
+            dd($e);
             DB::rollback();
             $msg = "Erro um tentar registrar: $e";
             throw new Exception ("Erro um tentar registrar o aluno: " . $e->getMessage());
@@ -135,6 +137,7 @@ class AlunoService
             $aluno->update([
                 'id_resp_fin' => $req->resp_fin,
                 'id_resp_pedag' => $req->resp_pedag,
+                'escola' => $req['aluno']['escola']
             ]);
             DB::commit();
             $msg = 'Aluno atualizado com sucesso!';

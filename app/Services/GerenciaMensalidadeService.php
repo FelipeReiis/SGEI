@@ -36,14 +36,15 @@ use App\Models\Pagamento;
         public function store($req){
             try{
                 DB::beginTransaction();
-                $valorMensalidade = Mensalidade::where('id', $req->mensalidade_id)->select('valor','mes')->first();
+                $valorMensalidade = Mensalidade::where('id', $req->mensalidade_id)->select('id', 'valor','mes')->first();
                 if($req->hasFile('comprovante')){
                     $arquivo = $req->file('comprovante');
-                    $nomeNovo = str_replace(' ', '-',$valorMensalidade->nome).'-'.Carbon::now()->format('Y-m-d').$arquivo->getClientOriginalName();
-                    $caminho = $req->file('comprovante')->storeAs('comprovantes_mensalidade', $nomeNovo, 'public');
+                    $nomeNovo = str_replace(' ', '-',$valorMensalidade->mes).'-'.Carbon::now()->format('Y-m-d').$arquivo->getClientOriginalName();
+                    $arquivo->storeAs('comprovantes_mensalidades', $nomeNovo, 'public');
+                    $caminho =  'comprovantes_mensalidades/' . $nomeNovo;
                 }
                 Pagamento::create([
-                    'id_mensalidade' => $req->mensalidade_id,
+                    'id_mensalidade' => $valorMensalidade->id,
                     'id_aluno' => $req->aluno_id,
                     'comprovante' => $caminho,
                     'pago_em' => Carbon::now(),

@@ -47,11 +47,12 @@ class AlunoController extends Controller
             $enderecoId = $this->enderecoService->store($req);
             $pessoasId = $this->pessoaService->store($req, $enderecoId);
             $this->dadosBancario->store($req, $pessoasId);
-            $this->alunoService->store($pessoasId);
+            $this->alunoService->store($pessoasId,$req['aluno']['escola'] );
             return redirect()->route('alunos.index')->with('sucesso', 'Aluno cadastrado com sucesso!');
 
         }catch(Exception $e){
-            return redirect()->route('alunos.index')->with('erro', $e->getMessage());
+            dd($e);
+            return redirect()->back()->with('erro', $e->getMessage());
         }
 
     }
@@ -77,7 +78,7 @@ class AlunoController extends Controller
             $this->dadosBancario->update($req);
             return redirect()->route('alunos.index')->with('sucesso', $alunoMsg);
         }catch(Exception $e){
-            return redirect()->route('alunos.index')->with('erro', $e->getMessage());;
+            return redirect()->back()->with('erro', $e->getMessage());;
         }
 
     }

@@ -13,15 +13,20 @@
 
         public function store(Request $req){
             try{
+                $precoLimpo = str_replace(['R$ ', '.'], '', $req->preco);
+                $req->preco = (float) str_replace(',', '.', $precoLimpo);
+                $evento = Evento::where('nome', $req->evento)->where('valor',  $req->preco)->where('data', Carbon::parse($req->data_evento)->format('Y-m-d'))->first();
+                if($evento){
+                   return "Já existe um evento com os mesmos dados.";
+                }
                 DB::beginTransaction();
                 if($req->hasFile('img')){
                     $arquivo = $req->file('img');
                     $nomeNovo = str_replace(' ', '-',$req->evento).'-'.Carbon::now()->format('Y-m-d').$arquivo->getClientOriginalName();
-                    $caminho = $req->file('img')->storeAs('eventos_imgs', $nomeNovo, 'public');
+                    $arquivo->storeAs('eventos_imgs', $nomeNovo, 'public');
+                    $caminho = 'eventos_imgs/' . $nomeNovo;
                 }
 
-                $precoLimpo = str_replace(['R$ ', '.'], '', $req->preco);
-                $req->preco = (float) str_replace(',', '.', $precoLimpo);
 
                 Evento::create([
                     'nome' => $req->evento,
@@ -34,7 +39,6 @@
                 DB::commit();
                 return 'Evento cadastrado com sucesso!';
             }catch(Exception $e){
-                dd($e);
                 DB::rollback();
                 throw new Exception ("Houve um problema ao cadastrar o evento: " . $e->getMessage());
             }
@@ -52,6 +56,7 @@
 
         public function update(Request $req, $id)
         {
+
             try {
                 DB::beginTransaction();
                 $evento = Evento::findOrFail($id);
@@ -62,21 +67,18 @@
                 // Se enviou nova imagem
                 if ($req->hasFile('img')) {
 
-
                     if ($evento->imagem && Storage::disk('public')->exists($evento->imagem)) {
                         Storage::disk('public')->delete($evento->imagem);
                     }
 
                     $arquivo = $req->file('img');
-
                     $nomeNovo = str_replace(' ', '-',$req->evento).'-'.now()->timestamp . '.' . $arquivo->getClientOriginalExtension();
 
-                    $caminho = $arquivo->storeAs('eventos_imgs', $nomeNovo, 'public');
+                    $arquivo->storeAs('eventos_imgs', $nomeNovo, 'public');
+                    $caminho =  'eventos_imgs/' . $nomeNovo;
                 }
-
                 $precoLimpo = str_replace(['R$ ', '.'], '', $req->preco);
                 $req->preco = (float) str_replace(',', '.', $precoLimpo);
-
                 $evento->update([
                     'nome' => $req->evento,
                     'valor' => $req->preco,
@@ -97,7 +99,19 @@
 
         public function delete($id){
             try{
-                Evento::where('id', $id)->delete();
+               $evento = Evento::findOrFail($id);
+
+                if ($evento->imagem) {
+                    $caminhoNoStorage = str_replace('storage/', '', $evento->imagem);
+
+                    // 3. Deleta o arquivo físico do disco público do Docker
+                    if (Storage::disk('public')->exists($caminhoNoStorage)) {
+                        Storage::disk('public')->delete($caminhoNoStorage);
+                    }
+                }
+                $evento->delete();
+
+                DB::commit();
 
                 return 'Evento deletado com sucesso.';
             }catch(Exception $e){

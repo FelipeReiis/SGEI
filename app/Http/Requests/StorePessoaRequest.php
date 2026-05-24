@@ -29,7 +29,7 @@ class StorePessoaRequest extends FormRequest
             "$p.nome" => 'required|string|max:70',
             "$p.email" => 'nullable|email|max:50',
             "$p.telefone" => 'nullable|string|max:15',
-            "$p.rg" => 'required|string|max:12',
+            "$p.rg" => 'required|string|max:13',
             "$p.data_nascimento" => 'required|date',
             "$p.cep" => 'required|string|max:9',
             "$p.logradouro" => 'required|string|max:100',
@@ -139,7 +139,7 @@ class StorePessoaRequest extends FormRequest
         protected function failedValidation(Validator $validator)
         {
             // Mostra os erros e interrompe
-            dd($validator->errors()->all());
+            // dd($validator->errors()->all());
 
             // Ou mostre os erros com os dados que causaram a falha
             // dd($validator->errors()->all(), $this->all());

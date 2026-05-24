@@ -17,6 +17,7 @@ return new class extends Migration
             $table->date('data')->nullable();
             $table->decimal('valor', total:8, places:2);
             $table->string('imagem', length:255)->nullable();
+            $table->string('status', length:30)->nullable();
             $table->text('observacao')->nullable();
         });
     }
