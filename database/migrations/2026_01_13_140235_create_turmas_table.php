@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('turmas', function (Blueprint $table) {
             $table->id();
             $table->string('horario', length:5);
+            $table->string('horario_final', length:5);
             $table->string('grau', length:25);
             $table->unsignedBigInteger('id_professor');
             $table->foreign('id_professor')->references('id')->on('professors')->onDelete('cascade');

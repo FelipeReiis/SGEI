@@ -10,6 +10,7 @@ class Aluno extends Model
         'id_pessoa',
         'id_resp_fin',
         'id_resp_pedag',
-        'escola'
+        'escola',
+        'status'
     ];
 }

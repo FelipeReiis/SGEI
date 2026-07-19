@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
+
 class GerenciadorController extends Controller
 {
     private $eventoService;
@@ -70,5 +71,9 @@ class GerenciadorController extends Controller
             return redirect()->back()->with('erro', $e->getMessage());
 
         }
+    }
+
+     public function eventoAlunoExport($idEvento){
+        return $this->gerenciaService->relacaoEventoAlunoExport($idEvento);
     }
 }

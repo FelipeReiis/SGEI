@@ -110,6 +110,10 @@
             alunoSelecionadoId.value = id;
         }
     };
+    const forcarDownload = () => {
+
+        window.location.href = `/export/mensalidade_aluno/${formulario.mensalidade_id}`;
+    };
 </script>
 
 <template>
@@ -211,6 +215,12 @@
                         class="form-control w-25 rounded-pill"
                         placeholder="Buscar aluno por nome ou CPF..."
                     >
+                    <button
+                        @click="forcarDownload"
+                        class="btn btn-sm btn-outline-pink"
+                        title="Exportar">
+                        <i class="bi bi-file-earmark-excel"></i> 📊 Exportar Excel
+                    </button>
                 </template>
 
                <template #selecao="{ linha }">

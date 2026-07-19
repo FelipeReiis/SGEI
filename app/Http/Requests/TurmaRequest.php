@@ -26,6 +26,7 @@ class TurmaRequest extends FormRequest
             "curso_id" => 'required',
             "grau" => 'required|max:25',
             "horario" => 'required|max:5',
+            "horario_final" => 'required|max:5',
         ];
     }
 
@@ -38,6 +39,8 @@ class TurmaRequest extends FormRequest
             "grau.max" => 'O grau deve ter no máximo 25 caracteres',
             "horario.required" => 'Informe o horário da turma',
             "horario.max" => 'O horário deve ter no máximo 5 caracteres',
+            "horario_final.required" => 'Informe o horário final da turma',
+            "horario_final.max" => 'O horário final deve ter no máximo 5 caracteres',
 
         ];
     }

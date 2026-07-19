@@ -18,7 +18,6 @@ return new class extends Migration
             $table->decimal('valor', total:8, places:2);
             $table->string('forma_pagamento', length:10)->nullable();
             $table->string('qtd_parcela', length:10)->nullable();
-            $table->string('comprovante', length:255);
             $table->date('pago_em');
             $table->unsignedBigInteger('id_evento')->nullable();
             $table->foreign('id_evento')->references('id')->on('eventos')->onDelete('cascade');
@@ -27,7 +26,7 @@ return new class extends Migration
             $table->timestamps();
         });
     }
-    
+
     public function down(): void
     {
         Schema::dropIfExists('pagamentos');

@@ -12,9 +12,10 @@ defineOptions({ layout: MainLayout });
 // Configuração das Colunas
 const colunas = [
     { label: 'Aluno', key: 'aluno_nome', sortable: true }, // Slot personalizado
+    { label: 'Data de nasc', key: 'data_nascimento', sortable: true }, // Slot personalizado
     { label: 'Resp. Financeiro', key: 'fin_nome', sortable: true },
     { label: 'Resp. Pedagógico', key: 'pedag_nome', sortable: true },
-    { label: 'Status', key: 'status', sortable: false }, // Slot personalizado
+    { label: 'Status', key: 'status', sortable: true }, // Slot personalizado
     { label: 'Ações', key: 'actions', sortable: false }, // Slot personalizado
 ];
 
@@ -45,7 +46,7 @@ const handleSort = (key) => {
             class="form-control w-25 rounded-pill"
             placeholder="Buscar..."
         >
-        <Link href="/alunos/create"><button class="btn btn-pink rounded-pill" >+ Novo Usuário</button></Link>
+        <Link href="/alunos/create"><button class="btn btn-pink rounded-pill" >+ Novo Aluno</button></Link>
       </template>
 
       <template #name="{ linha }">
@@ -59,6 +60,12 @@ const handleSort = (key) => {
         <span class="badge rounded-pill bg-success" v-if="linha.is_active">Ativo</span>
         <span class="badge rounded-pill bg-secondary" v-else>Inativo</span>
       </template>
+
+        <template #data_nascimento="{ linha }">
+            <span>
+                {{new Date(linha.data_nascimento).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}}
+            </span>
+        </template>
 
       <!-- <template #actions="{ linha }">
         <button class="btn btn-sm btn-outline-secondary me-1">✏️</button>
@@ -75,9 +82,9 @@ const handleSort = (key) => {
                 </Link>
 
                 <button
-                    @click="confirmarExclusao(linha.id, linha.nome)"
+                   :href="route('update.status', linha.aluno_id)"
                     class="btn btn-sm btn-outline-danger"
-                    title="Excluir Aluno"
+                    title="Alterar Status"
                 >
                     <i class="bi bi-trash"></i> 🗑️
                 </button>

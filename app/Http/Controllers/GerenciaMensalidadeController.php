@@ -10,9 +10,9 @@ use Inertia\Inertia;
 
 class GerenciaMensalidadeController extends Controller
 {
-    private $gerenciaService;
-    public function __construct(GerenciaMensalidadeService $gerenciaService){
-        $this->gerenciaService = $gerenciaService;
+    private $gerenciaMensalidadeService;
+    public function __construct(GerenciaMensalidadeService $gerenciaMensalidadeService){
+        $this->gerenciaMensalidadeService = $gerenciaMensalidadeService;
     }
     public function index(Request $req){
 
@@ -39,7 +39,7 @@ class GerenciaMensalidadeController extends Controller
     public function store(Request $req){
         try{
 
-            $msg = $this->gerenciaService->store($req);
+            $msg = $this->gerenciaMensalidadeService->store($req);
             return redirect()->back()->with('sucesso', $msg);
         }catch(Exception $e){
             return redirect()->back()->with('erro', $e->getMessage());
@@ -50,7 +50,7 @@ class GerenciaMensalidadeController extends Controller
      public function edit($id, Request $req){
         try{
 
-            [$alunos, $mensalidade, $inscritosIds] = $this->gerenciaService->edit($id, $req);
+            [$alunos, $mensalidade, $inscritosIds] = $this->gerenciaMensalidadeService->edit($id, $req);
             return Inertia::render('Gerencia/edit_mensalidades',[
                 'alunos' => $alunos->paginate(10)->withQueryString(),
                 'mensalidade' => $mensalidade,
@@ -60,5 +60,9 @@ class GerenciaMensalidadeController extends Controller
             return redirect()->back()->with('erro', $e->getMessage());
 
         }
+    }
+
+    public function mensalidadeAlunoExport($idMensalidade){
+        return $this->gerenciaMensalidadeService->relacaoMensalidadeAlunoExport($idMensalidade);
     }
 }

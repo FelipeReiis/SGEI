@@ -24,7 +24,7 @@
     // Estado para controlar qual aluno está selecionado no momento (Checkbox ativo)
     const alunoSelecionadoId = ref(null);
     const buscaAluno = ref(props.busca || '');
-
+    const arquivosAnexados = ref([]);
     // Formulário do Inertia
     const formulario = useForm({
         evento_id: props.evento?.id ?? '',
@@ -33,7 +33,9 @@
         aluno_cpf: '',
         fin_nome: '',
         fin_cpf: '',
-        comprovante: null,
+        comprovantes: [],
+        forma_pagamento: '',
+        qtd_parcelas: ''
     });
 
     // Monitora o filtro de busca de alunos
@@ -51,11 +53,12 @@
             // Encontra o objeto do aluno clicado dentro da lista de alunos
             const aluno = props.alunos.data.find(a => a.aluno_id === novoId);
             if (aluno) {
-                console.log(aluno.aluno_id)
                 formulario.aluno_id = aluno.aluno_id;
                 formulario.aluno_nome = aluno.aluno_nome;
                 formulario.aluno_cpf = aluno.aluno_cpf;
                 formulario.fin_nome = aluno.fin_nome;
+                formulario.forma_pagamento = aluno.forma_pagamento;
+                formulario.qtd_parcelas = aluno.qtd_parcela;
                 formulario.fin_cpf = aluno.fin_cpf; // Ou o campo correto de CPF financeiro se houver
             }
         } else {
@@ -70,13 +73,46 @@
         formulario.aluno_cpf = '';
         formulario.fin_nome = '';
         formulario.fin_cpf = '';
-        formulario.comprovante = null;
+        formulario.forma_pagamento = '';
+        formulario.qtd_parcelas = '';
+        formulario.comprovantes = [];
         alunoSelecionadoId.value = null;
+        arquivosAnexados.value = [];
     };
 
     // Captura o arquivo de imagem do comprovante
-    const uploadComprovante = (e) => {
-        formulario.comprovante = e.target.files[0];
+    const uploadComprovante = (event) => {
+        const files = event.target.files;
+        if (!files.length) return;
+
+        // Convertemos a FileList do HTML em um Array do JS e jogamos no nosso acumulador
+        Array.from(files).forEach(file => {
+            // Opcional: Evitar arquivos duplicados com o mesmo nome e tamanho
+            const jaExiste = arquivosAnexados.value.some(f => f.name === file.name && f.size === file.size);
+
+            if (!jaExiste) {
+                arquivosAnexados.value.push(file);
+            }
+        });
+
+        // Sincroniza o array local com o formulário do Inertia que será enviado ao backend
+        formulario.comprovantes = arquivosAnexados.value;
+
+        // Reseta o input de arquivo para permitir selecionar o mesmo arquivo novamente se o usuário quiser
+        event.target.value = '';
+    };
+
+    const removerArquivo = (index) => {
+        arquivosAnexados.value.splice(index, 1);
+        formulario.comprovantes = arquivosAnexados.value;
+    };
+
+    const formatarTamanho = (bytes) => {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     };
 
     // Executa a inscrição do aluno no evento
@@ -109,6 +145,11 @@
             // Se clicou em um novo, define o ID dele como o único ativo
             alunoSelecionadoId.value = id;
         }
+    };
+
+    const forcarDownload = () => {
+
+        window.location.href = `/export/evento_aluno/${formulario.evento_id}`;
     };
 </script>
 
@@ -153,29 +194,88 @@
                         <label class="form-label text-muted small">CPF Financeiro</label>
                         <input type="text" v-model="formulario.fin_cpf" class="form-control bg-light" readonly required>
                     </div>
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label text-muted small">Tipo de Pagamento*</label>
+                        <select v-model="formulario.forma_pagamento" class="form-select bg-light" :disabled="!formulario.aluno_id" readonly required>
+                            <option value="" disabled selected>Selecione a forma de pagamento...</option>
+                            <option value="Pix">Pix</option>
+                            <option value="Cartão de Crédito">Cartão de Crédito</option>
+                            <option value="Cartão de Débito">Cartão de Débito</option>
+                            <option value="Boleto">Boleto</option>
+                            <option value="Dinheiro">Dinheiro</option>
+                        </select>
+                        <div v-if="formulario.errors.forma_pagamento" class="text-danger small mt-1">
+                            {{ formulario.errors.forma_pagamento }}
+                        </div>
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label text-muted small">Quantidade de Parcelas*</label>
+                        <input type="number" v-model="formulario.qtd_parcelas" class="form-control bg-light" min="1" step="1" placeholder="Ex: 1" :disabled="!formulario.aluno_id" readonly required>
+                        <div v-if="formulario.errors.qtd_parcelas" class="text-danger small mt-1">
+                            {{ formulario.errors.qtd_parcelas }}
+                        </div>
+                    </div>
 
-                    <div class="col-md-12 mt-3">
-                        <label class="form-label fw-bold text-pink">Anexar Imagem do Comprovante*</label>
-                        <div class="d-flex gap-3 align-items-center">
+                    <div class="col-md-12 mt-4">
+                        <label class="form-label fw-bold text-pink">Anexar Imagem do Comprovante* (Permite múltiplos)</label>
+
+                        <div class="d-flex gap-3 align-items-start flex-column flex-md-row">
+                            <!-- Input de Arquivo (Repare o atributo 'multiple') -->
                             <input
                                 type="file"
                                 @change="uploadComprovante"
-                                class="form-control custom-input w-50"
-                                :class="{'is-invalid': formulario.errors.comprovante}"
+                                class="form-control custom-input w-100 w-md-50"
+                                :class="{'is-invalid': formulario.errors.comprovantes}"
                                 accept="image/*"
                                 :disabled="!formulario.aluno_id"
-                                required
+                                multiple
                             >
+
                             <button
                                 type="submit"
-                                class="btn btn-pink px-5 fw-bold"
-                                :disabled="formulario.processing || !formulario.aluno_id"
+                                class="btn btn-pink px-5 fw-bold w-100 w-md-auto ms-md-auto align-self-stretch align-self-md-start"
+                                :disabled="formulario.processing || !formulario.aluno_id || arquivosAnexados.length === 0"
                             >
                                 {{ formulario.processing ? 'Processando...' : 'Confirmar Inscrição' }}
                             </button>
                         </div>
-                        <div v-if="formulario.errors.comprovante" class="text-danger small mt-1">
-                            {{ formulario.errors.comprovante }}
+
+                        <!-- 👇 LISTAGEM DOS ARQUIVOS SELECIONADOS 👇 -->
+                        <div v-if="arquivosAnexados.length > 0" class="mt-3 p-3 bg-light rounded-3 border">
+                            <span class="text-muted small fw-bold d-block mb-2">Arquivos selecionados para envio:</span>
+
+                            <div class="d-flex flex-column gap-2">
+                                <div
+                                    v-for="(arquivo, index) in arquivosAnexados"
+                                    :key="index"
+                                    class="d-flex align-items-center justify-content-between bg-white p-2 rounded-2 shadow-sm border-start border-pink border-3"
+                                >
+                                    <div class="d-flex align-items-center gap-2 overflow-hidden me-2">
+                                        <i class="bi bi-image text-pink fs-5 flex-shrink-0"></i>
+                                        <span class="text-truncate small fw-secondary" :title="arquivo.name">
+                                            {{ arquivo.name }}
+                                        </span>
+                                        <span class="badge bg-light text-dark border small flex-shrink-0">
+                                            {{ formatarTamanho(arquivo.size) }}
+                                        </span>
+                                    </div>
+
+                                    <!-- Botão para remover da lista individualmente -->
+                                    <button
+                                        type="button"
+                                        @click="removerArquivo(index)"
+                                        class="btn btn-sm btn-outline-danger border-0 p-1"
+                                        title="Remover anexo"
+                                    >
+                                        <i class="bi bi-trash3-fill"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 👆 FIM DA LISTAGEM 👆 -->
+
+                        <div v-if="formulario.errors.comprovantes" class="text-danger small mt-1">
+                            {{ formulario.errors.comprovantes }}
                         </div>
                     </div>
 
@@ -211,6 +311,13 @@
                         class="form-control w-25 rounded-pill"
                         placeholder="Buscar aluno por nome ou CPF..."
                     >
+
+                   <button
+                        @click="forcarDownload"
+                        class="btn btn-sm btn-outline-pink"
+                        title="Exportar">
+                        <i class="bi bi-file-earmark-excel"></i> 📊 Exportar Excel
+                    </button>
                 </template>
 
                <template #selecao="{ linha }">
@@ -219,8 +326,6 @@
                             type="checkbox"
                             class="form-check-input"
                             :id="'aluno-' + linha.aluno_id"
-                            :checked="alunoSelecionadoId === linha.aluno_id || props.inscritosIds.includes(linha.aluno_id)"
-                            :disabled="props.inscritosIds.includes(linha.aluno_id)"
                             @change="alternarSelecao(linha.aluno_id)"
                         >
                     </div>

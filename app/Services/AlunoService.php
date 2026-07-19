@@ -24,7 +24,7 @@ class AlunoService
           $alunos = Aluno::join('pessoas as aluno_pessoa', 'alunos.id_pessoa', 'aluno_pessoa.id')
                         ->leftjoin('pessoas as pedag_pessoa', 'alunos.id_resp_pedag', 'pedag_pessoa.id')
                         ->leftjoin('pessoas as fin_pessoa', 'alunos.id_resp_fin', 'fin_pessoa.id')
-                        ->select('aluno_pessoa.nome as aluno_nome', 'pedag_pessoa.nome as pedag_nome', 'aluno_pessoa.id as aluno_id', 'fin_pessoa.nome as fin_nome');
+                        ->select('aluno_pessoa.nome as aluno_nome','aluno_pessoa.data_nascimento', 'pedag_pessoa.nome as pedag_nome', 'aluno_pessoa.id as aluno_id', 'fin_pessoa.nome as fin_nome');
 
         if($req->busca){
             $alunos->where('aluno_pessoa.nome', 'ILIKE', '%'.$req->busca.'%');
@@ -37,6 +37,8 @@ class AlunoService
                 $alunos->orderBy('fin_pessoa.nome');
             else if($req->sort == 'pedag_nome')
                 $alunos->orderBy('pedag_pessoa.nome');
+            else if($req->sort == 'data_nascimento')
+                 $alunos->orderBy('aluno_pessoa.data_nascimento');
         }
 
         return $alunos;
@@ -54,6 +56,7 @@ class AlunoService
                 'id_resp_pedag' => isset($idPessoaAluno[1]['pedagogico']) ? $idPessoaAluno[1]['pedagogico'] : $idPessoaAluno[1]['financeiro'],
                 'id_pessoa' => $idPessoaAluno[0]['aluno'],
                 'escola' => $escola,
+                'status' => 1,
             ]);
             DB::commit();
             $msg = 'Aluno registrado com sucesso!';
@@ -149,5 +152,21 @@ class AlunoService
             throw new Exception ("$msg: " . $e->getMessage());
         }
 
+    }
+
+    public function updateStatus($id){
+        try{
+            $aluno = Aluno::find($id);
+            $aluno->update([
+                'status' => $aluno->status == 1 ? 0 : 1
+            ]);
+            DB::commit();
+            $msg = 'Status do aluno atualizado com sucesso!';
+            return $msg;
+        }catch(Exception $e){
+            DB::rollback();
+            $msg = "Erro um tentar atualizar o status";
+            throw new Exception ("$msg: " . $e->getMessage());
+        }
     }
 }

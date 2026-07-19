@@ -83,6 +83,7 @@ class TurmaService{
            $turma =  Turma::create([
                 'id_professor' => $professor->id,
                 'horario' => $req->horario,
+                'horario_final' => $req->horario_final,
                 'grau' => $req->grau,
                 'id_curso' =>$req->curso_id,
                 'id_nivel' => $req->nivel_id
@@ -119,6 +120,7 @@ class TurmaService{
             'grau',
             'id_curso',
             'turmas.id_nivel',
+            'horario_final',
             DB::raw('array_agg(professor_dias.dia) as dias')
                 )
                 ->join('professors', 'turmas.id_professor', 'professors.id')
@@ -187,6 +189,7 @@ class TurmaService{
             Turma::where('id', $req->id)->update([
                 'id_professor' => $professor->id,
                 'horario' => $req->horario,
+                'horario_final' => $req->horario_final,
                 'grau' => $req->grau,
                 'id_curso' =>$req->curso_id,
                 'id_nivel' => $req->nivel_id

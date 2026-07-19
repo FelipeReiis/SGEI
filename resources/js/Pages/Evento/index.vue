@@ -120,7 +120,7 @@
             </span>
         </template>
 
-          <template #data="{ linha }">
+        <template #data="{ linha }">
             <span>
                 {{new Date(linha.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}}
             </span>

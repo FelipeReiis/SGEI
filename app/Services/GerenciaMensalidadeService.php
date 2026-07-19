@@ -1,11 +1,15 @@
 <?php
     namespace App\Services;
+
+    use App\Exports\MensalidadeExport;
     use App\Models\Aluno;
+use App\Models\Anexo;
 use App\Models\Mensalidade;
-use App\Models\Pagamento;
+    use App\Models\Pagamento;
     use Exception;
     use Carbon\Carbon;
     use Illuminate\Support\Facades\DB;
+    use Maatwebsite\Excel\Facades\Excel;
 
     class GerenciaMensalidadeService{
         public function edit($id, $req){
@@ -35,6 +39,7 @@ use App\Models\Pagamento;
 
         public function store($req){
             try{
+                
                 DB::beginTransaction();
                 $valorMensalidade = Mensalidade::where('id', $req->mensalidade_id)->select('id', 'valor','mes')->first();
                 if($req->hasFile('comprovante')){
@@ -43,12 +48,16 @@ use App\Models\Pagamento;
                     $arquivo->storeAs('comprovantes_mensalidades', $nomeNovo, 'public');
                     $caminho =  'comprovantes_mensalidades/' . $nomeNovo;
                 }
-                Pagamento::create([
+               $pagamento =  Pagamento::create([
                     'id_mensalidade' => $valorMensalidade->id,
                     'id_aluno' => $req->aluno_id,
-                    'comprovante' => $caminho,
                     'pago_em' => Carbon::now(),
                     'valor' => $valorMensalidade->valor
+                ]);
+
+                Anexo::create([
+                    'id_pagamento' => $pagamento->id,
+                    'caminho' => $caminho
                 ]);
                 DB::commit();
                 return  'Alunos cadastrados no evento com sucesso';
@@ -56,6 +65,11 @@ use App\Models\Pagamento;
                 DB::rollback();
                 throw new Exception ("Houve um erro ao cadastrar o aluno no evento: " . $e->getMessage());
             }
+        }
+
+         public function relacaoMensalidadeAlunoExport($idMensalidade){
+            return Excel::download(new MensalidadeExport($idMensalidade), 'mensalidade_alunos.xlsx');
+
         }
     }
 

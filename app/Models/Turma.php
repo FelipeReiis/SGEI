@@ -9,6 +9,7 @@ class Turma extends Model
     protected $fillable = [
         'grau',
         'horario',
+        'horario_final',
         'id_curso',
         'id_nivel',
         'id_professor'

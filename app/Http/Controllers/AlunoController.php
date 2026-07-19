@@ -51,7 +51,6 @@ class AlunoController extends Controller
             return redirect()->route('alunos.index')->with('sucesso', 'Aluno cadastrado com sucesso!');
 
         }catch(Exception $e){
-            dd($e);
             return redirect()->back()->with('erro', $e->getMessage());
         }
 
@@ -81,6 +80,15 @@ class AlunoController extends Controller
             return redirect()->back()->with('erro', $e->getMessage());;
         }
 
+    }
+
+    public function updateStatus($id){
+        try{
+            $this->alunoService->updateStatus($id);
+
+        }catch(Exception $e){
+            return redirect()->back()->with('erro: ', $e->getMessage());
+        }
     }
 
 

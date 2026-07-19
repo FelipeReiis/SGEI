@@ -13,6 +13,7 @@ class Pagamento extends Model
         'valor',
         'pago_em',
         'id_evento',
-        'comprovante'
+        'forma_pagamento',
+        'qtd_parcela'
     ];
 }

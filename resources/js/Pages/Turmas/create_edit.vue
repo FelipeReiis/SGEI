@@ -183,18 +183,40 @@
                     </div>
 
                     <div class="col-md-4">
-                        <label class="form-label">Horário</label>
-                        <input
-                            type="text"
-                            :value="formulario.horario"
-                            @input="formulario.horario = maskHorario($event.target.value)"
-                            class="form-control custom-input"
-                            :class="{'is-invalid' : formulario.errors && formulario.errors['horario']}"
-                            maxlength="5"
-                            placeholder="00:00"
-                        >
-                        <div v-if="formulario.errors['horario']" class="invalid-feedback">
-                            {{ formulario.errors['horario'] }}
+                        <div class="row">
+                            <!-- Horário Inicial (Atributos idênticos, tamanho reduzido) -->
+                            <div class="col-6">
+                                <label class="form-label">Horário Inicial</label>
+                                <input
+                                    type="text"
+                                    :value="formulario.horario"
+                                    @input="formulario.horario = maskHorario($event.target.value)"
+                                    class="form-control custom-input"
+                                    :class="{'is-invalid' : formulario.errors && formulario.errors['horario']}"
+                                    maxlength="5"
+                                    placeholder="00:00"
+                                >
+                                <div v-if="formulario.errors['horario']" class="invalid-feedback">
+                                    {{ formulario.errors['horario'] }}
+                                </div>
+                            </div>
+
+                            <!-- Horário Final (Novo campo compartilhando o espaço) -->
+                            <div class="col-6">
+                                <label class="form-label">Horário Final</label>
+                                <input
+                                    type="text"
+                                    :value="formulario.horario_final"
+                                    @input="formulario.horario_final = maskHorario($event.target.value)"
+                                    class="form-control custom-input"
+                                    :class="{'is-invalid' : formulario.errors && formulario.errors['horario_final']}"
+                                    maxlength="5"
+                                    placeholder="00:00"
+                                >
+                                <div v-if="formulario.errors['horario_final']" class="invalid-feedback">
+                                    {{ formulario.errors['horario_final'] }}
+                                </div>
+                            </div>
                         </div>
                     </div>
 
