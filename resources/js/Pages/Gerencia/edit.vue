@@ -35,7 +35,8 @@
         fin_cpf: '',
         comprovantes: [],
         forma_pagamento: '',
-        qtd_parcelas: ''
+        qtd_parcelas: '',
+        comprovantes_salvos: [],
     });
 
     // Monitora o filtro de busca de alunos
@@ -60,6 +61,7 @@
                 formulario.forma_pagamento = aluno.forma_pagamento;
                 formulario.qtd_parcelas = aluno.qtd_parcela;
                 formulario.fin_cpf = aluno.fin_cpf; // Ou o campo correto de CPF financeiro se houver
+                formulario.comprovantes_salvos = aluno.comprovantes_salvos;
             }
         } else {
             // Se desmarcar, limpa os campos do aluno no formulário
@@ -240,7 +242,34 @@
                             </button>
                         </div>
 
-                        <!-- 👇 LISTAGEM DOS ARQUIVOS SELECIONADOS 👇 -->
+                        <!-- Listagem de comprovantes ja salvos no banco -->
+                        <div v-if="formulario.comprovantes_salvos && formulario.comprovantes_salvos.length > 0" class="mt-3">
+                            <span class="text-muted small fw-bold d-block mb-2">📂 Comprovantes já cadastrados para este evento:</span>
+
+                            <div class="d-flex flex-wrap gap-2">
+                                <div
+                                    v-for="anexo in formulario.comprovantes_salvos"
+                                    :key="anexo.id"
+                                    class="d-flex align-items-center gap-2 bg-light p-2 rounded-3 border"
+                                >
+                                    <i class="bi bi-file-earmark-image text-success"></i>
+
+                                    <!-- Link para abrir/baixar o comprovante que já está no storage -->
+                                    <a
+                                        :href="`/storage/${anexo.caminho}`"
+                                        target="_blank"
+                                        class="text-decoration-none text-dark small fw-secondary text-truncate"
+                                        style="max-width: 180px;"
+                                    >
+                                        Visualizar Comprovante
+                                    </a>
+
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle small">Salvo</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 👇 LISTAGEM DOS ARQUIVOS SELECIONADOS no input de arquivos 👇 -->
                         <div v-if="arquivosAnexados.length > 0" class="mt-3 p-3 bg-light rounded-3 border">
                             <span class="text-muted small fw-bold d-block mb-2">Arquivos selecionados para envio:</span>
 
