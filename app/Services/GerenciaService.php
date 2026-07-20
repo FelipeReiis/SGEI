@@ -20,16 +20,22 @@ use Maatwebsite\Excel\Facades\Excel;
             DB::beginTransaction();
 
             $valorEvento = Evento::where('id', $req->evento_id)->select('valor','nome')->first();
-
+            if(Pagamento::where('id_evento', $req->evento_id)->where('id_aluno', $req->aluno_id)->exist()){
+                $pagamento = Pagamento::where('id_evento', $req->evento_id)->where('id_aluno', $req->aluno_id)->update([
+                    'pago_em' => Carbon::now(),
+                ]);
+            }else{
+                $pagamento = Pagamento::create([
+                    'id_evento' => $req->evento_id,
+                    'id_aluno' => $req->aluno_id,
+                    'forma_pagamento' => $req->forma_pagamento,
+                    'qtd_parcela' => $req->qtd_parcelas,
+                    'pago_em' => Carbon::now(),
+                    'valor' => $valorEvento->valor
+                ]);
+            }
             // 1. Primeiro criamos o registro do pagamento (sem a coluna 'comprovante')
-            $pagamento = Pagamento::create([
-                'id_evento' => $req->evento_id,
-                'id_aluno' => $req->aluno_id,
-                'forma_pagamento' => $req->forma_pagamento,
-                'qtd_parcela' => $req->qtd_parcelas,
-                'pago_em' => Carbon::now(),
-                'valor' => $valorEvento->valor
-            ]);
+
 
             // 2. Agora verificamos se existem múltiplos arquivos enviados pelo front-end
             if($req->hasFile('comprovantes')){
@@ -52,7 +58,6 @@ use Maatwebsite\Excel\Facades\Excel;
                     Anexo::create([
                         'id_pagamento' => $pagamento->id, // Chave estrangeira ligando ao pagamento
                         'caminho'      => $caminho,
-                        // 'tipo'      => 'evento', // Opcional: caso use a mesma tabela para mensalidades e eventos
                     ]);
                 }
             }
@@ -68,12 +73,17 @@ use Maatwebsite\Excel\Facades\Excel;
 
         public function edit($id, $req){
             try{
-                $alunos = Aluno::join('pessoas', 'alunos.id_pessoa', '=', 'pessoas.id')
+                $alunos =Aluno::join('pessoas', 'alunos.id_pessoa', '=', 'pessoas.id')
                                 ->join('pessoas as pessoas_fin', 'alunos.id_resp_fin', '=', 'pessoas_fin.id')
-                                ->leftJoin('pagamentos', function($join) use ($id) {
+
+                                // Mantém o leftJoin do Pagamento filtrando o evento por dentro
+                                ->leftJoin('pagamentos', function($join) use ($idEvento) {
                                     $join->on('pagamentos.id_aluno', '=', 'alunos.id')
-                                        ->where('pagamentos.id_evento', '=', $id); // Filtra o evento DENTRO do join
-                                    })
+                                        ->where('pagamentos.id_evento', '=', $idEvento);
+                                })
+
+                                // 👇 NOVO LEFT JOIN: Liga a tabela de pagamentos recém-encontrada com os anexos correspondentes 👇
+                                ->leftJoin('anexos', 'anexos.id_pagamento', '=', 'pagamentos.id')
 
                                 ->select(
                                     'pessoas.nome as aluno_nome',
@@ -81,8 +91,27 @@ use Maatwebsite\Excel\Facades\Excel;
                                     'alunos.id as aluno_id',
                                     'pessoas_fin.nome as fin_nome',
                                     'pessoas_fin.cpf as fin_cpf',
+                                    'pagamentos.id as pagamento_id', // Importante para sabermos o ID do pagamento no front
+                                    'pagamentos.forma_pagamento',
+                                    'pagamentos.qtd_parcela',
 
-                                    // 👇 Trazendo os campos novos de pagamento (virão nulos se o aluno não estiver inscrito) 👇
+                                    // 👇 A MÁGICA DO POSTGRES: Agrupa todos os caminhos dos anexos em uma lista JSON 👇
+                                    DB::raw("COALESCE(
+                                        json_agg(
+                                            json_build_object('id', anexos.id, 'caminho', anexos.caminho)
+                                        ) FILTER (WHERE anexos.id IS NOT NULL),
+                                        '[]'
+                                    ) as comprovantes_salvos")
+                                )
+                                // ⚠️ ATENÇÃO NO POSTGRESQL: Quando usamos funções de agregação (como json_agg),
+                                // precisamos agrupar pelos campos do select que não são agregados.
+                                ->groupBy(
+                                    'pessoas.nome',
+                                    'pessoas.cpf',
+                                    'alunos.id',
+                                    'pessoas_fin.nome',
+                                    'pessoas_fin.cpf',
+                                    'pagamentos.id',
                                     'pagamentos.forma_pagamento',
                                     'pagamentos.qtd_parcela'
                                 );

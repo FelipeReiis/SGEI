@@ -27,8 +27,7 @@ class EventoExport implements FromQuery, WithHeadings
                                 'pessoas.cpf',
                                 'pagamentos.forma_pagamento',
                                 'pagamentos.qtd_parcela',
-
-                                
+                                'pagamentos.pago_em',
                                 DB::raw('(SELECT COUNT(*) FROM anexos WHERE anexos.id_pagamento = pagamentos.id) as parcelas_pagas')
                             )
                             ->join('alunos', 'pagamentos.id_aluno', '=', 'alunos.id')
