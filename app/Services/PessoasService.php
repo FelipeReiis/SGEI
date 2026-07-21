@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Docs_funcionario;
 use App\Models\pessoa;
 use Exception;
 use Illuminate\Http\Request;
@@ -60,6 +61,21 @@ class PessoasService
                     'id_profissao' => $req->all()[$tipo]['tipo_servico'] ?? null,
                     'id_end' => $enderecoId
                 ]);
+                if (isset($req['documentos']) && is_array($req['documentos'])) {
+                    foreach ($req['documentos'] as $arquivo) {
+                        // Garante que é um arquivo válido enviado pelo upload
+                        if ($arquivo && $arquivo->isValid()) {
+
+                            $caminhoSalvo = $arquivo->store('documentos_funcionarios', 'public');
+
+                            Docs_funcionario::create([
+                                'id_funcionario' => $pessoa->id,
+                                'caminho'        => $caminhoSalvo,
+                            ]);
+                        }
+                    }
+                }
+
                 DB::commit();
                 return $pessoa->id;
             }
@@ -125,6 +141,19 @@ class PessoasService
                     'funcionario' => trim(isset($req->all()[$tipo]['tipo_servico']) ? 1 : 0),
                     'id_profissao' => $req->all()[$tipo]['tipo_servico'] ?? null,
                 ]);
+                if (isset($req[$tipo]['documentos']) && is_array($req[$tipo]['documentos'])) {
+                    foreach ($req[$tipo]['documentos'] as $arquivo) {
+                        // Garante que é um arquivo válido enviado pelo upload
+                        if ($arquivo && $arquivo->isValid()) {
+
+                            $caminhoSalvo = $arquivo->store('documentos_funcionarios', 'public');
+                            Docs_funcionario::create([
+                                'id_funcionario' => $pessoa->id,
+                                'caminho'        => $caminhoSalvo,
+                            ]);
+                        }
+                    }
+                }
 
             DB::commit();
             $msg = 'Registro atualizado com sucesso!';

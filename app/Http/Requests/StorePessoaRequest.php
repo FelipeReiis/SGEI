@@ -34,7 +34,13 @@ class StorePessoaRequest extends FormRequest
             "$p.cep" => 'required|string|max:9',
             "$p.logradouro" => 'required|string|max:100',
             "$p.bairro" => 'required|string|max:70',
-            "$p.complemento" => 'nullable|string|max:70'
+            "$p.complemento" => 'nullable|string|max:70',
+            "$p.documentos" => ['nullable', 'array'],
+            "$p.documentos.*" => [
+                'file',
+                'mimes:pdf,jpg,jpeg,png',
+                'max:5120'
+            ],
         ];
         if($p === 'aluno')
             $pessoa[] =   "$p.escola => 'required|string|max:100'";

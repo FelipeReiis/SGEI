@@ -97,6 +97,7 @@ class FuncionarioController extends Controller
     public function update(StorePessoaRequest $req, $id)
     {
         try {
+
             $req->validated();
             $funEnd = $this->enderecoService->update($req, $id);
             $this->dadosBancario->update($req);

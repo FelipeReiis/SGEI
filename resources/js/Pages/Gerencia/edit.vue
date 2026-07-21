@@ -87,26 +87,30 @@
         const files = event.target.files;
         if (!files.length) return;
 
-        // Convertemos a FileList do HTML em um Array do JS e jogamos no nosso acumulador
         Array.from(files).forEach(file => {
-            // Opcional: Evitar arquivos duplicados com o mesmo nome e tamanho
-            const jaExiste = arquivosAnexados.value.some(f => f.name === file.name && f.size === file.size);
+            const jaExiste = arquivosAnexados.value.some(f => f.file.name === file.name && f.file.size === file.size);
 
             if (!jaExiste) {
-                arquivosAnexados.value.push(file);
+                // Guardamos o arquivo puro + a URL temporária para o link
+                arquivosAnexados.value.push({
+                    file: file,
+                    url: URL.createObjectURL(file)
+                });
             }
         });
 
-        // Sincroniza o array local com o formulário do Inertia que será enviado ao backend
-        formulario.comprovantes = arquivosAnexados.value;
+        // Mapeia para passar apenas os objetos File puros para o formulário do Inertia
+        formulario.comprovantes = arquivosAnexados.value.map(item => item.file);
 
-        // Reseta o input de arquivo para permitir selecionar o mesmo arquivo novamente se o usuário quiser
         event.target.value = '';
     };
 
     const removerArquivo = (index) => {
+        // Revoga a URL temporária da memória
+        URL.revokeObjectURL(arquivosAnexados.value[index].url);
+
         arquivosAnexados.value.splice(index, 1);
-        formulario.comprovantes = arquivosAnexados.value;
+        formulario.comprovantes = arquivosAnexados.value.map(item => item.file);
     };
 
     const formatarTamanho = (bytes) => {
@@ -271,25 +275,36 @@
 
                         <!-- 👇 LISTAGEM DOS ARQUIVOS SELECIONADOS no input de arquivos 👇 -->
                         <div v-if="arquivosAnexados.length > 0" class="mt-3 p-3 bg-light rounded-3 border">
-                            <span class="text-muted small fw-bold d-block mb-2">Arquivos selecionados para envio:</span>
+                            <span class="text-muted small fw-bold d-block mb-2">
+                                Arquivos selecionados para envio (clique para visualizar):
+                            </span>
 
                             <div class="d-flex flex-column gap-2">
                                 <div
-                                    v-for="(arquivo, index) in arquivosAnexados"
+                                    v-for="(item, index) in arquivosAnexados"
                                     :key="index"
                                     class="d-flex align-items-center justify-content-between bg-white p-2 rounded-2 shadow-sm border-start border-pink border-3"
                                 >
                                     <div class="d-flex align-items-center gap-2 overflow-hidden me-2">
                                         <i class="bi bi-image text-pink fs-5 flex-shrink-0"></i>
-                                        <span class="text-truncate small fw-secondary" :title="arquivo.name">
-                                            {{ arquivo.name }}
-                                        </span>
+
+                                        <!-- LINK CLICÁVEL QUE ABRE O COMPROVANTE EM NOVA GUIA -->
+                                        <a
+                                            :href="item.url"
+                                            target="_blank"
+                                            class="text-truncate small fw-secondary text-decoration-none text-dark link-primary"
+                                            :title="'Clique para visualizar ' + item.file.name"
+                                        >
+                                            {{ item.file.name }}
+                                            <i class="bi bi-box-arrow-up-right ms-1 text-muted" style="font-size: 0.75rem;"></i>
+                                        </a>
+
                                         <span class="badge bg-light text-dark border small flex-shrink-0">
-                                            {{ formatarTamanho(arquivo.size) }}
+                                            {{ formatarTamanho(item.file.size) }}
                                         </span>
                                     </div>
 
-                                    <!-- Botão para remover da lista individualmente -->
+                                    <!-- Botão para remover da lista -->
                                     <button
                                         type="button"
                                         @click="removerArquivo(index)"

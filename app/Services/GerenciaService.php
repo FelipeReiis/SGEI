@@ -77,9 +77,9 @@ use Maatwebsite\Excel\Facades\Excel;
                                 ->join('pessoas as pessoas_fin', 'alunos.id_resp_fin', '=', 'pessoas_fin.id')
 
                                 // Mantém o leftJoin do Pagamento filtrando o evento por dentro
-                                ->leftJoin('pagamentos', function($join) use ($idEvento) {
+                                ->leftJoin('pagamentos', function($join) use ($id) {
                                     $join->on('pagamentos.id_aluno', '=', 'alunos.id')
-                                        ->where('pagamentos.id_evento', '=', $idEvento);
+                                        ->where('pagamentos.id_evento', '=', $id);
                                 })
 
                                 // 👇 NOVO LEFT JOIN: Liga a tabela de pagamentos recém-encontrada com os anexos correspondentes 👇
