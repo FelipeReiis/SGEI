@@ -36,7 +36,7 @@ class FuncionarioService
                     $funcionarios->orderBy('cpf');
                 }
             }
-            
+
             return $funcionarios;
 
         }catch(Exception $e){
@@ -49,6 +49,12 @@ class FuncionarioService
         try {
 
             $funcionario = Pessoa::with(['endereco', 'bancario', 'professor'])->find($id);
+             if ($funcionario) {
+                $funcionario->documentos = DB::table('docs_funcionarios')
+                    ->where('id_funcionario', $id)
+                    ->select('id', 'caminho')
+                    ->get();
+            }
             $especialidadesIds = $funcionario->professor ? $funcionario->professor->pluck('id_especialidade')->toArray() : [];
             return [$funcionario, $especialidadesIds];
 

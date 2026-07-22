@@ -20,7 +20,7 @@ use Maatwebsite\Excel\Facades\Excel;
             DB::beginTransaction();
 
             $valorEvento = Evento::where('id', $req->evento_id)->select('valor','nome')->first();
-            if(Pagamento::where('id_evento', $req->evento_id)->where('id_aluno', $req->aluno_id)->exist()){
+            if(Pagamento::where('id_evento', $req->evento_id)->where('id_aluno', $req->aluno_id)->exists()){
                 $pagamento = Pagamento::where('id_evento', $req->evento_id)->where('id_aluno', $req->aluno_id)->update([
                     'pago_em' => Carbon::now(),
                 ]);
@@ -67,6 +67,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
         }catch(Exception $e){
             DB::rollback();
+            dd($e);
             throw new Exception ("Houve um erro ao cadastrar o aluno no evento: " . $e->getMessage());
         }
     }

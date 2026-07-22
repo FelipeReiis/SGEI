@@ -216,7 +216,7 @@
                     </div>
                     <div class="col-md-6 mt-3">
                         <label class="form-label text-muted small">Quantidade de Parcelas*</label>
-                        <input type="number" v-model="formulario.qtd_parcelas" class="form-control bg-light" min="1" step="1" placeholder="Ex: 1" :disabled="!formulario.aluno_id" readonly required>
+                        <input type="number" v-model="formulario.qtd_parcelas" class="form-control bg-light" min="1" step="1" placeholder="Ex: 1" :disabled="!formulario.aluno_id" required>
                         <div v-if="formulario.errors.qtd_parcelas" class="text-danger small mt-1">
                             {{ formulario.errors.qtd_parcelas }}
                         </div>

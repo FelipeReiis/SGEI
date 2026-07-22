@@ -29,7 +29,7 @@
             conta: props.funcionario?.bancario?.conta ?? '',
             pix: props.funcionario?.bancario?.pix ?? '',
             banco: props.funcionario?.bancario?.banco ?? '',
-            documentos: [] // Array de arquivos que será enviado ao backend
+            documentos: props.funcionario?.documentos ??[], // Array de arquivos que será enviado ao backend
         },
     });
     const TAMANHO_MAXIMO_MB = 5;
@@ -163,7 +163,31 @@
                                     accept="image/*,application/pdf"
                                     @change="uploadDocumento"
                                 >
+                                <div v-if="funcionario.documentos && funcionario.documentos.length > 0" class="mb-4">
+                                    <label class="form-label fw-bold text-secondary">📄 Documentos Cadastrados Anteriormente:</label>
 
+                                    <div class="d-flex flex-column gap-2">
+                                        <div
+                                            v-for="doc in funcionario.documentos"
+                                            :key="doc.id"
+                                            class="d-flex align-items-center justify-content-between bg-light p-2 rounded-2 border"
+                                        >
+                                            <div class="d-flex align-items-center gap-2 overflow-hidden">
+                                                <i class="bi bi-file-earmark-check text-success fs-5"></i>
+
+                                                <!-- Link para abrir a imagem/PDF já salva na pasta storage -->
+                                                <a
+                                                    :href="'/storage/' + doc.caminho"
+                                                    target="_blank"
+                                                    class="text-truncate small fw-semibold text-decoration-none text-dark link-primary"
+                                                >
+                                                    {{ doc.caminho.split('/').pop() }}
+                                                    <i class="bi bi-box-arrow-up-right ms-1 text-muted" style="font-size: 0.75rem;"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <!-- Exibição dos arquivos anexados -->
                                 <div v-if="arquivosAnexados.length > 0" class="mt-3 p-3 bg-light rounded-3 border">
                                     <span class="text-muted small fw-bold d-block mb-2">

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Docs_funcionario;
 use App\Models\pessoa;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -61,16 +62,22 @@ class PessoasService
                     'id_profissao' => $req->all()[$tipo]['tipo_servico'] ?? null,
                     'id_end' => $enderecoId
                 ]);
-                if (isset($req['documentos']) && is_array($req['documentos'])) {
-                    foreach ($req['documentos'] as $arquivo) {
-                        // Garante que é um arquivo válido enviado pelo upload
+                if (isset($req[$tipo]['documentos']) && is_array($req[$tipo]['documentos'])) {
+                    foreach ($req[$tipo]['documentos'] as $arquivo) {
                         if ($arquivo && $arquivo->isValid()) {
 
-                            $caminhoSalvo = $arquivo->store('documentos_funcionarios', 'public');
+                            $nomeLimpoFuncionario = str_replace(' ', '-', strtolower($pessoa->nome));
+                            $dataAtual = Carbon::now()->format('Y-m-d');
+                            $hashUnico = uniqid();
 
+                            $nomeNovo = $nomeLimpoFuncionario . '-' . $dataAtual . '-' . $hashUnico . '-' . $arquivo->getClientOriginalName();
+
+                            $arquivo->storeAs('documentos_funcionarios', $nomeNovo, 'public');
+
+                            $caminho = 'documentos_funcionarios/' . $nomeNovo;
                             Docs_funcionario::create([
                                 'id_funcionario' => $pessoa->id,
-                                'caminho'        => $caminhoSalvo,
+                                'caminho'        => $caminho,
                             ]);
                         }
                     }
@@ -91,7 +98,6 @@ class PessoasService
     public function edit($id){
         try{
             $pessoa = pessoa::find($id);
-
             return $pessoa;
 
         }catch(Exception $e){
@@ -146,10 +152,18 @@ class PessoasService
                         // Garante que é um arquivo válido enviado pelo upload
                         if ($arquivo && $arquivo->isValid()) {
 
-                            $caminhoSalvo = $arquivo->store('documentos_funcionarios', 'public');
+                            $nomeLimpoFuncionario = str_replace(' ', '-', strtolower($pessoa->nome));
+                            $dataAtual = Carbon::now()->format('Y-m-d');
+                            $hashUnico = uniqid();
+
+                            $nomeNovo = $nomeLimpoFuncionario . '-' . $dataAtual . '-' . $hashUnico . '-' . $arquivo->getClientOriginalName();
+
+                            $arquivo->storeAs('documentos_funcionarios', $nomeNovo, 'public');
+
+                            $caminho = 'documentos_funcionarios/' . $nomeNovo;
                             Docs_funcionario::create([
                                 'id_funcionario' => $pessoa->id,
-                                'caminho'        => $caminhoSalvo,
+                                'caminho'        => $caminho,
                             ]);
                         }
                     }

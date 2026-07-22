@@ -24,7 +24,7 @@ class AlunoService
           $alunos = Aluno::join('pessoas as aluno_pessoa', 'alunos.id_pessoa', 'aluno_pessoa.id')
                         ->leftjoin('pessoas as pedag_pessoa', 'alunos.id_resp_pedag', 'pedag_pessoa.id')
                         ->leftjoin('pessoas as fin_pessoa', 'alunos.id_resp_fin', 'fin_pessoa.id')
-                        ->select('aluno_pessoa.nome as aluno_nome','aluno_pessoa.data_nascimento', 'pedag_pessoa.nome as pedag_nome', 'aluno_pessoa.id as aluno_id', 'fin_pessoa.nome as fin_nome');
+                        ->select('aluno_pessoa.nome as aluno_nome','aluno_pessoa.data_nascimento', 'pedag_pessoa.nome as pedag_nome', 'aluno_pessoa.id as aluno_id', 'fin_pessoa.nome as fin_nome', 'alunos.status');
 
         if($req->busca){
             $alunos->where('aluno_pessoa.nome', 'ILIKE', '%'.$req->busca.'%');
@@ -156,7 +156,7 @@ class AlunoService
 
     public function updateStatus($id){
         try{
-            $aluno = Aluno::find($id);
+            $aluno = Aluno::where('id_pessoa', $id)->first();
             $aluno->update([
                 'status' => $aluno->status == 1 ? 0 : 1
             ]);

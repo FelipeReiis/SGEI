@@ -57,7 +57,7 @@ const handleSort = (key) => {
       </template>
 
       <template #status="{ linha }">
-        <span class="badge rounded-pill bg-success" v-if="linha.is_active">Ativo</span>
+        <span class="badge rounded-pill bg-success" v-if="linha.status == true">Ativo</span>
         <span class="badge rounded-pill bg-secondary" v-else>Inativo</span>
       </template>
 
@@ -81,13 +81,13 @@ const handleSort = (key) => {
                     <i class="bi bi-pencil"></i> ✏️
                 </Link>
 
-                <button
+                <Link
                    :href="route('update.status', linha.aluno_id)"
                     class="btn btn-sm btn-outline-danger"
                     title="Alterar Status"
                 >
-                    <i class="bi bi-trash"></i> 🗑️
-                </button>
+                    <i class="bi bi-arrow-repeat fs-5"></i> 🔄
+                </Link>
 
             </div>
         </template>

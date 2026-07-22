@@ -84,8 +84,8 @@ class AlunoController extends Controller
 
     public function updateStatus($id){
         try{
-            $this->alunoService->updateStatus($id);
-
+            $msg = $this->alunoService->updateStatus($id);
+            return redirect()->route('alunos.index')->with('sucesso', $msg);
         }catch(Exception $e){
             return redirect()->back()->with('erro: ', $e->getMessage());
         }
