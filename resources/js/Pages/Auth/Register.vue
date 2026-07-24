@@ -1,10 +1,12 @@
 <script setup>
-import GuestLayout from '@/Layouts/GuestLayout.vue';
+import MainLayout from '@/Layouts/MainLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+
+// Define o MainLayout para rodar dentro do layout principal do sistema
+defineOptions({ layout: MainLayout });
 
 const form = useForm({
     name: '',
@@ -21,93 +23,124 @@ const submit = () => {
 </script>
 
 <template>
-    <GuestLayout>
-        <Head title="Register" />
+    <Head title="Novo Usuário" />
 
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="name" value="Name" />
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card-custom shadow-sm p-4">
 
-                <TextInput
-                    id="name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.name"
-                    required
-                    autofocus
-                    autocomplete="name"
-                />
+                <!-- Cabeçalho do Card -->
+                <div class="d-flex align-items-center gap-2 mb-4 pb-2 border-bottom">
+                    <span class="fs-4">👤</span>
+                    <h5 class="fw-bold mb-0 text-secondary">Cadastrar Novo Usuário</h5>
+                </div>
 
-                <InputError class="mt-2" :message="form.errors.name" />
+                <form @submit.prevent="submit">
+                    <!-- Campo Nome -->
+                    <div class="mb-3">
+                        <InputLabel for="name" value="Nome Completo*" class="form-label" />
+
+                        <TextInput
+                            id="name"
+                            type="text"
+                            class="form-control custom-input"
+                            :class="{ 'is-invalid': form.errors.name }"
+                            v-model="form.name"
+                            required
+                            autofocus
+                            autocomplete="name"
+                            placeholder="Digite o nome..."
+                        />
+
+                        <InputError class="mt-1" :message="form.errors.name" />
+                    </div>
+
+                    <!-- Campo Email -->
+                    <div class="mb-3">
+                        <InputLabel for="email" value="E-mail*" class="form-label" />
+
+                        <TextInput
+                            id="email"
+                            type="email"
+                            class="form-control custom-input"
+                            :class="{ 'is-invalid': form.errors.email }"
+                            v-model="form.email"
+                            required
+                            autocomplete="username"
+                            placeholder="exemplo@email.com"
+                        />
+
+                        <InputError class="mt-1" :message="form.errors.email" />
+                    </div>
+
+                    <!-- Campo Senha -->
+                    <div class="mb-3">
+                        <InputLabel for="password" value="Senha*" class="form-label" />
+
+                        <TextInput
+                            id="password"
+                            type="password"
+                            class="form-control custom-input"
+                            :class="{ 'is-invalid': form.errors.password }"
+                            v-model="form.password"
+                            required
+                            autocomplete="new-password"
+                            placeholder="••••••••"
+                        />
+
+                        <InputError class="mt-1" :message="form.errors.password" />
+                    </div>
+
+                    <!-- Campo Confirmar Senha -->
+                    <div class="mb-4">
+                        <InputLabel
+                            for="password_confirmation"
+                            value="Confirmar Senha*"
+                            class="form-label"
+                        />
+
+                        <TextInput
+                            id="password_confirmation"
+                            type="password"
+                            class="form-control custom-input"
+                            :class="{ 'is-invalid': form.errors.password_confirmation }"
+                            v-model="form.password_confirmation"
+                            required
+                            autocomplete="new-password"
+                            placeholder="••••••••"
+                        />
+
+                        <InputError
+                            class="mt-1"
+                            :message="form.errors.password_confirmation"
+                        />
+                    </div>
+
+                    <!-- Ações / Botões -->
+                    <div class="d-flex align-items-center justify-content-between pt-2 border-top">
+                        <Link
+                            :href="route('login')"
+                            class="text-decoration-none small text-muted hover-pink"
+                        >
+                            Já tem uma conta?
+                        </Link>
+
+                        <button
+                            type="submit"
+                            class="btn btn-pink px-4 fw-bold"
+                            :disabled="form.processing"
+                        >
+                            {{ form.processing ? 'Cadastrando...' : 'Cadastrar' }}
+                        </button>
+                    </div>
+                </form>
             </div>
-
-            <div class="mt-4">
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel
-                    for="password_confirmation"
-                    value="Confirm Password"
-                />
-
-                <TextInput
-                    id="password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password_confirmation"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError
-                    class="mt-2"
-                    :message="form.errors.password_confirmation"
-                />
-            </div>
-
-            <div class="mt-4 flex items-center justify-end">
-                <Link
-                    :href="route('login')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                    Already registered?
-                </Link>
-
-                <PrimaryButton
-                    class="ms-4"
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Register
-                </PrimaryButton>
-            </div>
-        </form>
-    </GuestLayout>
+        </div>
+    </div>
 </template>
+
+<style scoped>
+.hover-pink:hover {
+    color: #ff0055 !important;
+}
+</style>
