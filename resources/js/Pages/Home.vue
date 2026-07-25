@@ -22,7 +22,7 @@ import MainLayout from '@/Layouts/MainLayout.vue';
 
         <div class="cards-grid welcome-grid">
 
-            <div class="card clickable-card" @click="irPara('/secretaria')">
+            <div class="card clickable-card" @click="irPara('/alunos')">
                 <div class="card-info">
                     <span class="card-label">Área Administrativa</span>
                     <strong class="card-value-title">Secretaria</strong>
@@ -31,7 +31,7 @@ import MainLayout from '@/Layouts/MainLayout.vue';
                 </div>
             </div>
 
-            <div class="card clickable-card" @click="irPara('/inscricoes')">
+            <div class="card clickable-card" @click="irPara('/mensalidades')">
                 <div class="card-info">
                     <span class="card-label">Fluxo de Alunos</span>
                     <strong class="card-value-title">Inscrições</strong>

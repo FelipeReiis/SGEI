@@ -18,14 +18,24 @@ const getInitials = (name) => {
 
 <template>
   <div class="header-content">
-    <div class="search-bar">
-      <span>🔍</span>
-      <input type="text" placeholder="Buscar no sistema..." />
+    <div v-if="$page.props.auth.user?.name === 'admin User'">
+        <Link
+            :href="route('register')"
+            method="get"
+            as="button"
+            class="btn-logout"
+        >
+            <span>+ Criar Usuário</span>
+            <i class="fas fa-sign-out-alt ml-2"></i>
+        </Link>
+    </div>
+
+    
+    <div v-else>
+        👍
     </div>
 
     <div class="user-info">
-      <div class="notif-dot" title="Notificações">🔔</div>
-
       <div class="profile">
         <div class="avatar">{{ getInitials(user.name) }}</div>
 
