@@ -163,12 +163,12 @@
                                     accept="image/*,application/pdf"
                                     @change="uploadDocumento"
                                 >
-                                <div v-if="funcionario.documentos && funcionario.documentos.length > 0" class="mb-4">
+                                <div v-if="formulario.funcionario.documentos && formulario.funcionario.documentos.length > 0" class="mb-4">
                                     <label class="form-label fw-bold text-secondary">📄 Documentos Cadastrados Anteriormente:</label>
 
                                     <div class="d-flex flex-column gap-2">
                                         <div
-                                            v-for="doc in funcionario.documentos"
+                                            v-for="doc in formulario.funcionario.documentos"
                                             :key="doc.id"
                                             class="d-flex align-items-center justify-content-between bg-light p-2 rounded-2 border"
                                         >

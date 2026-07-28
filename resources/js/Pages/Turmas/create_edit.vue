@@ -32,7 +32,8 @@
         horario: props.turma?.horario ?? '',
         nivel_id: props.turma?.id_nivel ?? '',
         alunos_ids: [],
-        dias_aulas: props.turma?.dias ?? []
+        dias_aulas: props.turma?.dias ?? [],
+        horario_final: props.turma?.horario_final ?? ''
     });
 
     const maskHorario = (v) => {
@@ -201,7 +202,7 @@
                                 </div>
                             </div>
 
-                            <!-- Horário Final (Novo campo compartilhando o espaço) -->
+
                             <div class="col-6">
                                 <label class="form-label">Horário Final</label>
                                 <input
