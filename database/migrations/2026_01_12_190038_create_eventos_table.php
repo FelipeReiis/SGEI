@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('imagem', length:255)->nullable();
             $table->string('status', length:30)->nullable();
             $table->text('observacao')->nullable();
+            $table->timestamps();
         });
     }
 

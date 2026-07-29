@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pagamento extends Model
 {
-    public $timestamps = false;
 
     protected $fillable = [
         'id_aluno',
