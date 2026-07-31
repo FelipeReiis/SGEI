@@ -75,7 +75,7 @@ COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY docker/supervisord.conf /etc/supervisord.conf
 
 # Abre a porta padrão de acessos HTTP
-EXPOSE 1000
+EXPOSE 10000
 
 # Inicia o supervisor que cuida do Nginx + PHP-FPM ao mesmo tempo
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
