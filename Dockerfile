@@ -46,17 +46,15 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # 💡 PADRÃO DEFINITIVO: Mantemos em /var/www para alinhar com o erro do print
 WORKDIR /var/www
 
-COPY composer.json composer.lock ./
 # Copia o build do Vite vindo do estágio anterior para ./public/build
+COPY --from=frontend-builder /app/public/build ./public/build
 
 # Instala as dependências de produção do Composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
-
+COPY composer.json composer.lock ./
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 
 COPY . .
-
-COPY --from=frontend-builder /app/public/build ./public/build
 # Garante que as pastas existam em /var/www antes de dar permissões
 RUN mkdir -p /var/www/storage /var/www/bootstrap/cache
 
@@ -70,7 +68,7 @@ COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY docker/supervisord.conf /etc/supervisord.conf
 
 # Abre a porta padrão de acessos HTTP
-EXPOSE 10000
+EXPOSE 1000
 
 # Inicia o supervisor que cuida do Nginx + PHP-FPM ao mesmo tempo
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
