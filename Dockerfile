@@ -45,7 +45,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # 💡 PADRÃO DEFINITIVO: Mantemos em /var/www para alinhar com o erro do print
 WORKDIR /var/www
-
+COPY . .
 # Copia o build do Vite vindo do estágio anterior para ./public/build
 COPY --from=frontend-builder /app/public/build ./public/build
 
@@ -54,7 +54,7 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 COPY composer.json composer.lock ./
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 
-COPY . .
+
 # Garante que as pastas existam em /var/www antes de dar permissões
 RUN mkdir -p /var/www/storage /var/www/bootstrap/cache
 
