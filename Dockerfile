@@ -46,29 +46,24 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # 💡 PADRÃO DEFINITIVO: Mantemos em /var/www para alinhar com o erro do print
 WORKDIR /var/www
 
-# Copia a estrutura do Laravel para a pasta raiz correta
-COPY . .
-
+COPY composer.json composer.lock ./
 # Copia o build do Vite vindo do estágio anterior para ./public/build
-COPY --from=frontend-builder /app/public/build ./public/build
 
 # Instala as dependências de produção do Composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
-COPY composer.json composer.lock ./
+
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 
 COPY . .
 
-RUN php artisan config:cache || true
-RUN php artisan route:cache || true
-RUN php artisan view:cache || true
+COPY --from=frontend-builder /app/public/build ./public/build
 # Garante que as pastas existam em /var/www antes de dar permissões
 RUN mkdir -p /var/www/storage /var/www/bootstrap/cache
 
 # Aplica as permissões corretas para o servidor web e uploads funcionarem
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
-
+RUN chmod -R 775 storage bootstrap/cache
 
 # Copia os arquivos de configuração do servidor
 COPY docker/nginx.conf /etc/nginx/nginx.conf
