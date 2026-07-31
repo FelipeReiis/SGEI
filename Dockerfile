@@ -54,8 +54,14 @@ COPY --from=frontend-builder /app/public/build ./public/build
 
 # Instala as dependências de produção do Composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
+COPY composer.json composer.lock ./
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 
+COPY . .
+
+RUN php artisan config:cache || true
+RUN php artisan route:cache || true
+RUN php artisan view:cache || true
 # Garante que as pastas existam em /var/www antes de dar permissões
 RUN mkdir -p /var/www/storage /var/www/bootstrap/cache
 
