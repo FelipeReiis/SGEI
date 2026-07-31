@@ -29,6 +29,13 @@ Route::get('/health', function () {
     return response('OK', 200);
 });
 
+Route::get('/debug-env', function () {
+    return [
+        'APP_URL_ENV' => env('APP_URL'),
+        'APP_URL_CONFIG' => config('app.url'),
+    ];
+});
+
 Route::get('/home', function () {
     return Inertia::render('Home');
 })->middleware(['auth', 'verified'])->name('Home');
