@@ -65,7 +65,7 @@ class FuncionarioController extends Controller
             $endId = $this->enderecoService->store($req);
             $pessoaId = $this->pessoaService->store($req, $endId);
             $this->dadosBancario->store($req, $pessoaId);
-            if(count($req->funcionario['especialidades']) > 0)
+            if(isset($req->funcionario['especialidades']) && count($req->funcionario['especialidades']) > 0)
                 $this->funcionarioService->createProfessor($pessoaId, $req->funcionario['especialidades']);
             $msg = "Funcionário cadastrado com sucesso!!";
             return redirect()->route('funcionarios.index')->with('sucesso', $msg);
@@ -102,7 +102,7 @@ class FuncionarioController extends Controller
             $funEnd = $this->enderecoService->update($req, $id);
             $this->dadosBancario->update($req);
             $msg = $this->pessoaService->update($req, $id);
-            if(count($req->funcionario['especialidades']) > 0)
+            if(isset($req->funcionario['especialidades']) && count($req->funcionario['especialidades']) > 0)
                 $this->funcionarioService->updateProfessor($id, $req->funcionario['especialidades']);
             return redirect()->route('funcionarios.index')->with('sucesso', $msg);
         } catch (Exception $e) {
