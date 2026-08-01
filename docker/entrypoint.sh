@@ -6,9 +6,9 @@ echo "🚀 Iniciando preparação do ambiente Laravel..."
 # 1. Garante a criação do link simbólico da pasta storage
 php artisan storage:link --force || true
 
-# 2. Executa as migrations automaticamente no PostgreSQL do Render
-echo "📦 Executando migrations..."
-php artisan migrate --force
+# 2. Executa as migrations e as SEEDS automaticamente
+echo "📦 Executando migrations e seeds..."
+php artisan migrate --force --seed  # 👈 ADICIONADO O --seed AQUI!
 
 # 3. Limpa e recria os caches de configuração para produção
 echo "🧹 Otimizando caches do Laravel..."
