@@ -69,9 +69,13 @@ RUN chmod -R 777 /var/www/storage /var/www/bootstrap/cache
 # Copia os arquivos de configuração do servidor
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY docker/supervisord.conf /etc/supervisord.conf
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 
-# Abre a porta do Render
+# Garante a permissão de execução dentro do container
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Expõe a porta do Render
 EXPOSE 10000
 
-# Inicia o supervisor que cuida do Nginx + PHP-FPM ao mesmo tempo
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+# Executa o script que roda migrations + storage:link + supervisor
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
