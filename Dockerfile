@@ -43,31 +43,34 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
 # Traz o binário do Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# 💡 PADRÃO DEFINITIVO: Mantemos em /var/www para alinhar com o erro do print
 WORKDIR /var/www
+
+# Copia todo o projeto PRIMEIRO
 COPY . .
-# Copia o build do Vite vindo do estágio anterior para ./public/build
+
+# Copia o build do Vite vindo do estágio 1
 COPY --from=frontend-builder /app/public/build ./public/build
 
 # Instala as dependências de produção do Composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
-COPY composer.json composer.lock ./
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 
+# Garante que as pastas essenciais do Laravel e Nginx existam e tenham permissão 777/775
+RUN mkdir -p /var/www/storage/framework/views \
+             /var/www/storage/framework/sessions \
+             /var/www/storage/framework/cache \
+             /var/www/storage/logs \
+             /var/www/bootstrap/cache \
+             /run/nginx
 
-# Garante que as pastas existam em /var/www antes de dar permissões
-RUN mkdir -p /var/www/storage /var/www/bootstrap/cache
-
-# Aplica as permissões corretas para o servidor web e uploads funcionarem
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
-
-RUN chmod -R 775 storage bootstrap/cache
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache /run/nginx
+RUN chmod -R 777 /var/www/storage /var/www/bootstrap/cache
 
 # Copia os arquivos de configuração do servidor
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY docker/supervisord.conf /etc/supervisord.conf
 
-# Abre a porta padrão de acessos HTTP
+# Abre a porta do Render
 EXPOSE 10000
 
 # Inicia o supervisor que cuida do Nginx + PHP-FPM ao mesmo tempo
