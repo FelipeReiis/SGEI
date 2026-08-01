@@ -32,6 +32,7 @@
             documentos: props.funcionario?.documentos ??[], // Array de arquivos que será enviado ao backend
         },
     });
+
     const TAMANHO_MAXIMO_MB = 5;
     const TAMANHO_MAXIMO_BYTES = TAMANHO_MAXIMO_MB * 1024 * 1024;
     // Função de upload de múltiplos arquivos
@@ -48,7 +49,6 @@
 
             // 2. Verifica se já não foi adicionado
             const jaExiste = arquivosAnexados.value.some(f => f.file.name === file.name && f.file.size === file.size);
-
             if (!jaExiste) {
                 arquivosAnexados.value.push({
                     file: file,
@@ -57,9 +57,6 @@
             }
         });
 
-        // Atualiza a propriedade no formulário do Inertia (manda só os objetos File)
-        formulario.funcionario.documentos = arquivosAnexados.value.map(item => item.file);
-
         event.target.value = ''; // Reseta o input file
     };
 
@@ -67,7 +64,6 @@
     const removerArquivo = (index) => {
         URL.revokeObjectURL(arquivosAnexados.value[index].url);
         arquivosAnexados.value.splice(index, 1);
-        formulario.funcionario.documentos = arquivosAnexados.value.map(item => item.file);
     };
 
     // Formata o tamanho do arquivo
@@ -82,6 +78,12 @@
     const enviar = () => {
         // ATENÇÃO: No Inertia, para enviar arquivos em Edição (PUT), usaremos o método POST com _method: 'PUT'
         // para evitar bugs do PHP não ler multipart/form-data via PUT.
+        if (arquivosAnexados.value.length > 0) {
+            formulario.funcionario.documentos = arquivosAnexados.value.map(item => item.file);
+        } else {
+            // Se for edição e não anexou nada novo, envia vazio para não reenviar os objetos velhos do banco como se fossem Files
+            formulario.funcionario.documentos = [];
+        }
         if (props.funcionario) {
             formulario.post(route('funcionarios.update', props.funcionario.id), {
                 headers: { 'X-HTTP-Method-Override': 'PUT' }
