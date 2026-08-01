@@ -19,10 +19,12 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+   public function boot(): void
     {
         Vite::prefetch(concurrency: 3);
-        if (env('FORCE_HTTPS')) {
+
+        // 💡 Força HTTPS se o ambiente for produção OU se a flag FORCE_HTTPS estiver ativa
+        if ($this->app->environment('production') || config('app.env') === 'production' || env('FORCE_HTTPS', false)) {
             URL::forceScheme('https');
         }
     }
