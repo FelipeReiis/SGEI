@@ -18,13 +18,20 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->firstOrCreate([
-            'name' => 'admin User',
-            'email' => 'admin@user.com',
-            'password' => Hash::make('Admin@2026!'),
-            'email_verified_at' => now(),
-        ]);
-
+        // User::factory()->create([
+        //     'name' => 'admin User',
+        //     'email' => 'admin@user.com',
+        //     'password' => Hash::make('Admin@2026!'),
+        //     'email_verified_at' => now(),
+        // ]);
+        User::firstOrCreate(
+            ['email' => 'admin@user.com'], // 🔍 Condição de busca
+            [                              // 📝 Dados para criar se NÃO encontrar
+                'name' => 'admin User',
+                'password' => Hash::make('Admin@2026!'),
+                'email_verified_at' => now(),
+            ]
+        );
         $this->call([
             CursosSeeder::class,
             NiveisSeeder::class,
